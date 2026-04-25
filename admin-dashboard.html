@@ -14,6 +14,8 @@
         .btn-pink { background-color: #C08497; }
         .btn-pink:hover { background-color: #a66d80; }
         table th { white-space: nowrap; }
+        /* Settings Tab Styles */
+        .active-tab { background-color: #fce7f3 !important; border-left: 4px solid #db2777; color: #db2777; }
     </style>
 </head>
 <body class="bg-[#FDF8F8] font-sans">
@@ -49,7 +51,6 @@
                     <div class="grid grid-cols-2 gap-3">
                         <select id="salesPerson" class="w-full border rounded p-2 text-xs font-semibold">
                             <option value="">-- Select --</option>
-                            <option value="User 1">User 1</option>
                         </select>
                         <input type="date" id="orderDate" value="2026-04-25" class="w-full border rounded p-2 text-xs">
                     </div>
@@ -75,12 +76,7 @@
                     <div class="flex flex-wrap gap-2 mt-2">
                         <input type="text" id="productSearch" list="productOptions" onchange="syncPriceFromSearch()" placeholder="Select Product..." class="flex-1 min-w-[120px] p-2 border rounded text-xs font-semibold">
                         <datalist id="productOptions">
-                            <option value="VIP Night Face Cream" data-price="3000">
-                            <option value="Vip Night Body Cream" data-price="5000">
-                            <option value="Night Serum" data-price="2500">
-                            <option value="Night Toner" data-price="1500">
-                            <option value="Charcoal Soap" data-price="800">
-                        </datalist>
+                            </datalist>
                         <input type="number" id="customPrice" placeholder="Price" class="w-20 p-2 border rounded text-xs font-bold">
                         <input type="number" id="prodQty" value="1" class="w-10 p-2 border rounded text-xs text-center">
                         <button onclick="addToCartFromSearch()" class="btn-pink text-white px-3 py-1 rounded font-bold text-xs">ADD</button>
@@ -112,7 +108,7 @@
             <div class="bg-white rounded-xl shadow-sm border border-pink-100 overflow-hidden">
                 <div class="header-bg p-3 flex justify-between items-center">
                     <h4 class="text-white text-xs font-bold uppercase tracking-widest">📦 Orders Preview</h4>
-                    <button class="bg-red-500/20 text-red-300 text-[9px] px-3 py-1 rounded border border-red-500/40 font-bold">CLEAR ALL</button>
+                    <button onclick="clearTable()" class="bg-red-500/20 text-red-300 text-[9px] px-3 py-1 rounded border border-red-500/40 font-bold">CLEAR ALL</button>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-[10px] text-left border-collapse min-w-[1000px]">
@@ -132,7 +128,8 @@
                             </tr>
                         </thead>
                         <tbody id="orderTableBody" class="divide-y divide-gray-100">
-                            </tbody>
+                             <tr><td colspan="11" class="p-10 text-center text-gray-300 italic">No orders added to preview.</td></tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -165,456 +162,413 @@
     </div>
 
 	<div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
-    <div class="bg-white w-full max-w-4xl h-[500px] rounded-xl shadow-2xl flex overflow-hidden">
-        
-        <div class="w-1/3 bg-gray-100 border-r flex flex-col">
-            <div class="p-4 border-b bg-pink-600 text-white font-bold">⚙️ Settings</div>
-            <nav class="flex-1 p-2 space-y-1">
-                <button onclick="showTab('salesTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition active-tab" id="btn-salesTab">
-                    👤 Sales Team
-                </button>
-                <button onclick="showTab('productsTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition" id="btn-productsTab">
-                    🛍 Manage Products
-                </button>
-                <button onclick="showTab('deliveryTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition" id="btn-deliveryTab">
-                    🚚 Delivery Charges
-                </button>
-            </nav>
-            <div class="p-4 border-t space-y-2">
-                <button onclick="saveSettings()" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700">SAVE ALL</button>
-                <button onclick="toggleSettings()" class="w-full bg-gray-300 text-gray-700 py-2 rounded-lg font-bold">CLOSE</button>
-            </div>
-        </div>
-
-        <div class="w-2/3 p-6 overflow-y-auto bg-white">
-            
-            <div id="salesTab" class="tab-content">
-                <h2 class="text-xl font-bold mb-4 text-blue-600">Manage Sales Team</h2>
-                <div class="grid grid-cols-2 gap-2 mb-4 bg-blue-50 p-3 rounded-lg border border-blue-100">
-                    <input type="text" id="newSalesName" placeholder="Full Name" class="p-2 border rounded text-sm">
-                    <input type="text" id="newSalesShort" placeholder="Short Name" class="p-2 border rounded text-sm">
-                    <input type="text" id="newSalesPhone" placeholder="Mobile Number" class="p-2 border rounded text-sm">
-                    <input type="text" id="newSalesPos" placeholder="Position" class="p-2 border rounded text-sm">
-                    <button onclick="addNewSalesPerson()" class="col-span-2 bg-blue-600 text-white py-2 rounded font-bold">+ Add Person</button>
-                </div>
-                <table class="w-full text-xs border">
-                    <thead class="bg-gray-100">
-                        <tr><th class="p-2 text-left border">Name</th><th class="p-2 text-left border">Mobile</th><th class="p-2 text-right border">Action</th></tr>
-                    </thead>
-                    <tbody id="settingsSalesList" class="divide-y"></tbody>
-                </table>
-            </div>
-
-            <div id="productsTab" class="tab-content hidden">
-                <h2 class="text-xl font-bold mb-4 text-pink-600">Manage Products</h2>
-                <div class="grid grid-cols-3 gap-2 mb-4 bg-pink-50 p-3 rounded-lg border border-pink-100">
-                    <input type="text" id="newProdName" placeholder="Product Name" class="p-2 border rounded text-sm col-span-2">
-                    <input type="text" id="newProdShort" placeholder="Short" class="p-2 border rounded text-sm">
-                    <input type="number" id="newProdPrice" placeholder="Price" class="p-2 border rounded text-sm col-span-2">
-                    <button onclick="addNewProduct()" class="bg-pink-600 text-white py-2 rounded font-bold">+ Add</button>
-                </div>
-                <table class="w-full text-xs border">
-                    <thead class="bg-gray-100">
-                        <tr><th class="p-2 text-left border">Product</th><th class="p-2 text-left border">Price</th><th class="p-2 text-right border">Action</th></tr>
-                    </thead>
-                    <tbody id="settingsProductList" class="divide-y"></tbody>
-                </table>
-            </div>
-
-            <div id="deliveryTab" class="tab-content hidden">
-                <h2 class="text-xl font-bold mb-4 text-orange-600">Delivery Charges</h2>
-                <div class="bg-orange-50 p-6 rounded-lg border border-orange-100">
-                    <label class="block text-sm font-bold mb-2">Default Delivery Fee (LKR):</label>
-                    <input type="number" id="settingDelCharge" class="w-full p-3 border rounded-lg text-lg font-bold" placeholder="425.00">
-                    <p class="text-xs text-gray-500 mt-2 italic">* This amount will be added to orders by default.</p>
+        <div class="bg-white w-full max-w-4xl h-[500px] rounded-xl shadow-2xl flex overflow-hidden border">
+            <div class="w-1/3 bg-gray-100 border-r flex flex-col">
+                <div class="p-4 border-b bg-pink-600 text-white font-bold">⚙️ Settings</div>
+                <nav class="flex-1 p-2 space-y-1">
+                    <button onclick="showTab('salesTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition active-tab" id="btn-salesTab">
+                        👤 Sales Team
+                    </button>
+                    <button onclick="showTab('productsTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition" id="btn-productsTab">
+                        🛍 Manage Products
+                    </button>
+                    <button onclick="showTab('deliveryTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition" id="btn-deliveryTab">
+                        🚚 Delivery Charges
+                    </button>
+                </nav>
+                <div class="p-4 border-t space-y-2">
+                    <button onclick="saveSettings()" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700">SAVE ALL</button>
+                    <button onclick="toggleSettings()" class="w-full bg-gray-300 text-gray-700 py-2 rounded-lg font-bold">CLOSE</button>
                 </div>
             </div>
 
+            <div class="w-2/3 p-6 overflow-y-auto bg-white">
+                <div id="salesTab" class="tab-content">
+                    <h2 class="text-xl font-bold mb-4 text-blue-600">Manage Sales Team</h2>
+                    <div class="grid grid-cols-2 gap-2 mb-4 bg-blue-50 p-3 rounded-lg border border-blue-100">
+                        <input type="text" id="newSalesName" placeholder="Full Name" class="p-2 border rounded text-sm">
+                        <input type="text" id="newSalesShort" placeholder="Short Name" class="p-2 border rounded text-sm">
+                        <input type="text" id="newSalesPhone" placeholder="Mobile Number" class="p-2 border rounded text-sm">
+                        <input type="text" id="newSalesPos" placeholder="Position" class="p-2 border rounded text-sm">
+                        <button onclick="addNewSalesPerson()" class="col-span-2 bg-blue-600 text-white py-2 rounded font-bold">+ Add Person</button>
+                    </div>
+                    <table class="w-full text-xs border">
+                        <thead class="bg-gray-100">
+                            <tr><th class="p-2 text-left border">Name</th><th class="p-2 text-left border">Mobile</th><th class="p-2 text-right border">Action</th></tr>
+                        </thead>
+                        <tbody id="settingsSalesList" class="divide-y"></tbody>
+                    </table>
+                </div>
+
+                <div id="productsTab" class="tab-content hidden">
+                    <h2 class="text-xl font-bold mb-4 text-pink-600">Manage Products</h2>
+                    <div class="grid grid-cols-3 gap-2 mb-4 bg-pink-50 p-3 rounded-lg border border-pink-100">
+                        <input type="text" id="newProdName" placeholder="Product Name" class="p-2 border rounded text-sm col-span-2">
+                        <input type="text" id="newProdShort" placeholder="Short" class="p-2 border rounded text-sm">
+                        <input type="number" id="newProdPrice" placeholder="Price" class="p-2 border rounded text-sm col-span-2">
+                        <button onclick="addNewProduct()" class="bg-pink-600 text-white py-2 rounded font-bold">+ Add</button>
+                    </div>
+                    <table class="w-full text-xs border">
+                        <thead class="bg-gray-100">
+                            <tr><th class="p-2 text-left border">Product</th><th class="p-2 text-left border">Price</th><th class="p-2 text-right border">Action</th></tr>
+                        </thead>
+                        <tbody id="settingsProductList" class="divide-y"></tbody>
+                    </table>
+                </div>
+
+                <div id="deliveryTab" class="tab-content hidden">
+                    <h2 class="text-xl font-bold mb-4 text-orange-600">Delivery Charges</h2>
+                    <div class="bg-orange-50 p-6 rounded-lg border border-orange-100">
+                        <label class="block text-sm font-bold mb-2">Default Delivery Fee (LKR):</label>
+                        <input type="number" id="settingDelCharge" class="w-full p-3 border rounded-lg text-lg font-bold" placeholder="425.00">
+                        <p class="text-xs text-gray-500 mt-2 italic">* This amount will be added to orders by default.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<style>
-    .active-tab { background-color: #fce7f3 !important; border-left: 4px solid #db2777; color: #db2777; }
-</style>
     <script>
-	
-		// පිටුව Load වන විටම Login වී ඇත්දැයි පරීක්ෂා කිරීම
+		// --- 1. CONFIG & DATA ---
+		let cart = [];
+		let deliveryCharge = 425.00;
+		let settingsData = {
+			products: [],
+			salesPersons: [],
+			delCharge: 425
+		};
+
+		// Auth check
 		(function() {
 			if (sessionStorage.getItem("isLoggedIn") !== "true") {
-				window.location.replace = "login.html"; // Login වී නැත්නම් ආපසු හරවා යැවීම
-		}
-	})();
+				window.location.replace("login.html");
+			}
+		})();
 
 		function logout() {
-			console.log("Logging out...");
 			localStorage.clear();
 			sessionStorage.clear();
 			window.location.replace("login.html");
 		}
-	
-        let cart = [];
-        let deliveryCharge = 425.00;
 
-        function handleDelOption() {
-            deliveryCharge = (document.getElementById('delOption').value === "yes") ? 425.00 : 0.00;
-            renderCart();
-            updatePreview();
+		// --- 2. MODAL & TAB CONTROL ---
+		function toggleSettings() {
+			const modal = document.getElementById('settingsModal');
+			modal.classList.toggle('hidden');
+		}
+
+		function showTab(tabId) {
+			document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+			document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active-tab'));
+			document.getElementById(tabId).classList.remove('hidden');
+			document.getElementById('btn-' + tabId).classList.add('active-tab');
+		}
+
+		// --- 3. DASHBOARD LOGIC ---
+		function handleDelOption() {
+			deliveryCharge = (document.getElementById('delOption').value === "yes") ? settingsData.delCharge : 0.00;
+			renderCart();
+			updatePreview();
+		}
+
+		function syncPriceFromSearch() {
+			const val = document.getElementById('productSearch').value;
+			const opts = document.getElementById('productOptions').options;
+			for (let i = 0; i < opts.length; i++) {
+				if (opts[i].value === val) {
+					document.getElementById('customPrice').value = opts[i].getAttribute('data-price');
+					break;
+				}
+			}
+		}
+
+		function addToCartFromSearch() {
+			const name = document.getElementById('productSearch').value;
+			const price = parseFloat(document.getElementById('customPrice').value);
+			const qty = parseFloat(document.getElementById('prodQty').value);
+			if (!name || isNaN(price)) return alert("Select product!");
+			
+			cart.push({ name, price, qty });
+			renderCart();
+			updatePreview();
+		}
+
+		function removeFromCart(index) {
+			cart.splice(index, 1);
+			renderCart();
+			updatePreview();
+		}
+
+		function renderCart() {
+			const tbody = document.getElementById('orderTableBody');
+			const name = document.getElementById('outName').value;
+			const addr = document.getElementById('outAddress').value;
+			const p1 = document.getElementById('outPhone').value;
+			const p2 = document.getElementById('outPhone2').value;
+			const city = document.getElementById('outCity').value;
+			const waybill = document.getElementById('waybillNo').value || "Auto";
+			const orderId = document.getElementById('orderId').value || "Auto";
+
+			let subtotal = 0;
+			let description = cart.map(item => `${item.name} (${item.qty})`).join(", ");
+			cart.forEach(item => subtotal += (item.price * item.qty));
+			
+			const discount = parseFloat(document.getElementById('discountRate').value) || 0;
+			const final = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
+
+			if (cart.length > 0) {
+				tbody.innerHTML = `
+					<tr class="hover:bg-pink-50/30">
+						<td class="p-3">1</td>
+						<td class="p-3 font-bold">${waybill}</td>
+						<td class="p-3">${orderId}</td>
+						<td class="p-3 font-bold">${name}</td>
+						<td class="p-3 text-gray-500">${addr}</td>
+						<td class="p-3 text-blue-600 font-medium">${description}</td>
+						<td class="p-3">${p1}</td>
+						<td class="p-3">${p2}</td>
+						<td class="p-3 font-black text-red-600">Rs. ${final.toFixed(2)}</td>
+						<td class="p-3">${city}</td>
+						<td class="p-3 text-center">
+							<button onclick="removeFromCart(0)" class="text-red-500 font-bold">✕</button>
+						</td>
+					</tr>`;
+			} else {
+				tbody.innerHTML = '<tr><td colspan="11" class="p-10 text-center text-gray-300 italic">No orders added to preview.</td></tr>';
+			}
+
+			document.getElementById('finalPriceDisplay').innerText = final.toFixed(2);
+			document.getElementById('orderCount').innerText = cart.length > 0 ? 1 : 0;
+		}
+
+		function updatePreview() {
+			const name = document.getElementById('outName').value || "...";
+			const address = document.getElementById('outAddress').value || "...";
+			const phone = document.getElementById('outPhone').value || "...";
+			const discount = parseFloat(document.getElementById('discountRate').value) || 0;
+
+			let subtotal = 0;
+			let itemsList = "";
+			cart.forEach((item) => {
+				subtotal += (item.price * item.qty);
+				itemsList += `• ${item.name} x${item.qty}\n`;
+			});
+
+			const final = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
+			
+			let msg = `🌸 *C Pearl White - Order* 🌸\n`;
+			msg += `👤 Name: ${name}\n`;
+			msg += `📱 Phone: ${phone}\n`;
+			msg += `📍 Address: ${address}\n\n`;
+			msg += `📦 Items:\n${itemsList || "None"}\n`;
+			msg += `💰 *TOTAL COD: Rs. ${final.toFixed(2)}*`;
+
+			document.getElementById('waPreview').value = msg;
+			renderCart();
+		}
+
+		// --- 4. SETTINGS SYSTEM LOGIC ---
+		function addNewSalesPerson() {
+			const name = document.getElementById('newSalesName').value.trim();
+			const short = document.getElementById('newSalesShort').value.trim();
+			const phone = document.getElementById('newSalesPhone').value.trim();
+			const pos = document.getElementById('newSalesPos').value.trim();
+			if (!name || !short) return alert("Fill Name and Short Name!");
+			settingsData.salesPersons.push({ name, short, phone, pos });
+			renderSettingsLists();
+			['newSalesName', 'newSalesShort', 'newSalesPhone', 'newSalesPos'].forEach(id => document.getElementById(id).value = '');
+		}
+
+		function addNewProduct() {
+			const name = document.getElementById('newProdName').value.trim();
+			const short = document.getElementById('newProdShort').value.trim();
+			const price = document.getElementById('newProdPrice').value.trim();
+			if (!name || !price) return alert("Fill Product Name and Price!");
+			settingsData.products.push({ name, short, price });
+			renderSettingsLists();
+			['newProdName', 'newProdShort', 'newProdPrice'].forEach(id => document.getElementById(id).value = '');
+		}
+
+		function removeItem(type, index) {
+			if (type === 'sales') settingsData.salesPersons.splice(index, 1);
+			if (type === 'product') settingsData.products.splice(index, 1);
+			renderSettingsLists();
+		}
+
+		function renderSettingsLists() {
+			const sBody = document.getElementById('settingsSalesList');
+			sBody.innerHTML = settingsData.salesPersons.map((s, i) => `
+				<tr>
+					<td class="p-2 border"><b>${s.name}</b><br><span class="text-[10px] text-blue-500">${s.short}</span></td>
+					<td class="p-2 border">${s.phone}</td>
+					<td class="p-2 border text-right"><button onclick="removeItem('sales', ${i})" class="text-red-500 font-bold">✕</button></td>
+				</tr>`).join('');
+
+			const pBody = document.getElementById('settingsProductList');
+			pBody.innerHTML = settingsData.products.map((p, i) => `
+				<tr>
+					<td class="p-2 border"><b>${p.name}</b></td>
+					<td class="p-2 border">Rs. ${parseFloat(p.price).toFixed(2)}</td>
+					<td class="p-2 border text-right"><button onclick="removeItem('product', ${i})" class="text-red-500 font-bold">✕</button></td>
+				</tr>`).join('');
+		}
+
+		// Apply settings to Dashboard UI
+		function applySettingsToDashboard() {
+			// Update Delivery Option
+			const delOpt = document.getElementById('delOption');
+			if(delOpt) delOpt.options[0].text = parseFloat(settingsData.delCharge).toFixed(2);
+			deliveryCharge = settingsData.delCharge;
+
+			// Update Sales Dropdown
+			const salesSelect = document.getElementById('salesPerson');
+			salesSelect.innerHTML = '<option value="">-- Select --</option>' + 
+				settingsData.salesPersons.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
+
+			// Update Products Datalist
+			const dataList = document.getElementById('productOptions');
+			dataList.innerHTML = settingsData.products.map(p => 
+				`<option value="${p.name} (${p.short})" data-price="${p.price}">`).join('');
+		}
+
+		async function saveSettings() {
+			const salesStr = settingsData.salesPersons.map(s => `${s.name}|${s.short}|${s.phone}|${s.pos}`).join('\n');
+			const prodsStr = settingsData.products.map(p => `${p.name},${p.short},${p.price}`).join('\n');
+			const delCharge = document.getElementById('settingDelCharge').value;
+
+			try {
+				const res = await fetch('/manage-settings', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ del_charge: delCharge, sales_persons: salesStr, products: prodsStr })
+				});
+				if (res.ok) {
+					alert("Settings Saved Successfully! ✅");
+					settingsData.delCharge = parseFloat(delCharge);
+					applySettingsToDashboard();
+					toggleSettings();
+				}
+			} catch (err) { alert("Error saving settings."); }
+		}
+
+		// --- 5. INITIAL LOAD & AI ---
+		window.addEventListener('DOMContentLoaded', async () => {
+			try {
+				const response = await fetch('/manage-settings');
+				if (response.ok) {
+					const data = await response.json();
+					if (data) {
+						settingsData.delCharge = data.del_charge || 425;
+						document.getElementById('settingDelCharge').value = settingsData.delCharge;
+						
+						if (data.sales_persons) {
+							settingsData.salesPersons = data.sales_persons.split('\n').filter(l => l.trim()).map(line => {
+								const [name, short, phone, pos] = line.split('|');
+								return { name, short, phone, pos };
+							});
+						}
+						if (data.products) {
+							settingsData.products = data.products.split('\n').filter(l => l.trim()).map(line => {
+								const [name, short, price] = line.split(',');
+								return { name, short, price };
+							});
+						}
+						renderSettingsLists();
+						applySettingsToDashboard();
+					}
+				}
+			} catch (e) { console.log("Load error"); }
+		});
+
+		async function formatWithGroq() {
+			let rawText = document.getElementById('rawMessage').value;
+			const btn = document.getElementById('btnText');
+			if (!rawText) return alert("Enter message!");
+			btn.innerText = "Processing... ✨"; btn.disabled = true;
+			try {
+				const response = await fetch('/format-info', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ rawText: rawText })
+				});
+				const data = await response.json();
+				const result = JSON.parse(data.choices[0].message.content);
+				document.getElementById('outName').value = result.name || "";
+				document.getElementById('outAddress').value = result.address || "";
+				document.getElementById('outCity').value = result.city || "";
+				document.getElementById('outPhone').value = result.phone || "";
+				document.getElementById('outPhone2').value = result.phone2 || "";
+				updatePreview();
+			} catch (error) { alert("AI Error."); } finally {
+				btn.innerText = "Format Info ✨"; btn.disabled = false;
+			}
+		}
+
+		function shareToWhatsApp() {
+			const message = document.getElementById('waPreview').value;
+			window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+		}
+
+		function saveOrder() {
+			const name = document.getElementById('outName').value;
+			const phone = document.getElementById('outPhone').value;
+			if (!name || !phone || cart.length === 0) return alert("Fill customer info and add items!");
+			
+			const tbody = document.getElementById('orderTableBody');
+			if (tbody.rows.length === 1 && tbody.rows[0].cells.length < 5) tbody.innerHTML = '';
+
+			const description = cart.map(item => `${item.name} (${item.qty})`).join(", ");
+			let subtotal = 0;
+			cart.forEach(item => subtotal += (item.price * item.qty));
+			const discount = parseFloat(document.getElementById('discountRate').value) || 0;
+			const finalTotal = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
+
+			const row = tbody.insertRow();
+			row.className = "hover:bg-pink-50/30 border-b border-gray-100";
+			row.innerHTML = `
+				<td class="p-3">${tbody.rows.length}</td>
+				<td class="p-3 font-bold">${document.getElementById('waybillNo').value || 'PENDING'}</td>
+				<td class="p-3">${document.getElementById('orderId').value || 'Auto'}</td>
+				<td class="p-3 font-bold">${name}</td>
+				<td class="p-3">${document.getElementById('outAddress').value}</td>
+				<td class="p-3 text-blue-600 font-medium">${description}</td>
+				<td class="p-3">${phone}</td>
+				<td class="p-3">${document.getElementById('outPhone2').value || '-'}</td>
+				<td class="p-3 font-black text-red-600">Rs. ${finalTotal.toFixed(2)}</td>
+				<td class="p-3">${document.getElementById('outCity').value}</td>
+				<td class="p-3 text-center"><button onclick="this.parentElement.parentElement.remove(); updateOrderStats();" class="text-red-500 font-bold">✕</button></td>
+			`;
+			updateOrderStats();
+			clearForm();
+		}
+
+		function updateOrderStats() {
+			const rows = document.getElementById('orderTableBody').getElementsByTagName('tr');
+			let total = 0, count = 0;
+			for (let row of rows) {
+				if (row.cells.length > 5) {
+					const val = row.cells[8].innerText.replace('Rs. ', '');
+					total += parseFloat(val); count++;
+				}
+			}
+			document.getElementById('orderCount').innerText = count;
+			document.getElementById('finalPriceDisplay').innerText = total.toFixed(2);
+		}
+
+		function clearForm() {
+			document.getElementById('outName').value = '';
+			document.getElementById('outPhone').value = '';
+			document.getElementById('outPhone2').value = '';
+			document.getElementById('outAddress').value = '';
+			document.getElementById('outCity').value = '';
+			document.getElementById('rawMessage').value = '';
+			cart = []; renderCart(); updatePreview();
+		}
+
+        function clearTable() {
+            document.getElementById('orderTableBody').innerHTML = '<tr><td colspan="11" class="p-10 text-center text-gray-300 italic">No orders added to preview.</td></tr>';
+            updateOrderStats();
         }
-
-		// 1. Settings Modal එක පෙන්වීමට සහ වැසීමට
-function toggleSettings() {
-    const modal = document.getElementById('settingsModal');
-    if (modal) {
-        modal.classList.toggle('hidden');
-    }
-}
-
-// 2. දත්ත Dashboard එකේ Dropdowns සහ Lists වලට ඇතුළත් කරන ප්‍රධාන ශ්‍රිතය
-function applySettingsToDashboard(del, sales, prods) {
-    // Delivery Charge Update
-    deliveryCharge = parseFloat(del) || 0;
-    const delOption = document.getElementById('delOption');
-    if(delOption && delOption.options[0]) {
-        delOption.options[0].text = deliveryCharge.toFixed(2);
-        delOption.options[0].value = "yes";
-    }
-
-    // Sales Persons Dropdown Update
-    const salesSelect = document.getElementById('salesPerson');
-    if(salesSelect && sales) {
-        salesSelect.innerHTML = '<option value="">-- Select --</option>';
-        sales.split('\n').forEach(person => {
-            if(person.trim()) {
-                const pName = person.trim();
-                salesSelect.innerHTML += `<option value="${pName}">${pName}</option>`;
-            }
-        });
-    }
-
-    // Products Datalist Update
-    const dataList = document.getElementById('productOptions');
-    if(dataList && prods) {
-        dataList.innerHTML = '';
-        prods.split('\n').forEach(line => {
-            const parts = line.split(',');
-            if(parts.length === 3) {
-                const [name, short, price] = parts;
-                dataList.innerHTML += `<option value="${name.trim()} (${short.trim()})" data-price="${price.trim()}">`;
-            }
-        });
-    }
-    
-    // Preview එක අලුත් මිල ගණන් අනුව Update කිරීම
-    if (typeof updatePreview === "function") updatePreview();
-}
-
-// 3. Settings දත්ත Cloudflare D1 වෙත Save කිරීම
-async function saveSettings() {
-    const delVal = document.getElementById('settingDelCharge').value;
-    const salesVal = document.getElementById('settingSalesPersons').value;
-    const prodsVal = document.getElementById('settingProducts').value;
-
-    const data = {
-        del_charge: delVal,
-        sales_persons: salesVal,
-        products: prodsVal
-    };
-
-    // Button එකේ පෙනුම වෙනස් කිරීම
-    const btn = event ? event.target : null;
-    let originalText = "";
-    if (btn) {
-        originalText = btn.innerText;
-        btn.innerText = "Saving... ⏳";
-        btn.disabled = true;
-    }
-
-    try {
-        const response = await fetch('/manage-settings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-
-        if (response.ok) {
-            applySettingsToDashboard(delVal, salesVal, prodsVal);
-            alert("Settings Synced to Cloudflare! ☁️✅");
-            toggleSettings();
-        } else {
-            alert("Error: සර්වර් එකට දත්ත සේව් කිරීමට නොහැකි විය.");
-        }
-    } catch (error) {
-        console.error("Settings Error:", error);
-        alert("සම්බන්ධතා දෝෂයකි. කරුණාකර නැවත උත්සාහ කරන්න.");
-    } finally {
-        if (btn) {
-            btn.innerText = originalText;
-            btn.disabled = false;
-        }
-    }
-}
-
-// 4. පිටුව Load වන විට Cloud එකෙන් Settings ලබා ගැනීම
-window.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const response = await fetch('/manage-settings');
-        if (response.ok) {
-            const data = await response.json();
-            if (data) {
-                if(document.getElementById('settingDelCharge')) document.getElementById('settingDelCharge').value = data.del_charge;
-                if(document.getElementById('settingSalesPersons')) document.getElementById('settingSalesPersons').value = data.sales_persons;
-                if(document.getElementById('settingProducts')) document.getElementById('settingProducts').value = data.products;
-                
-                applySettingsToDashboard(data.del_charge, data.sales_persons, data.products);
-            }
-        }
-    } catch (error) {
-        console.log("Settings load error - using defaults.");
-    }
-});	
-        function syncPriceFromSearch() {
-            const val = document.getElementById('productSearch').value;
-            const opts = document.getElementById('productOptions').options;
-            for (let i = 0; i < opts.length; i++) {
-                if (opts[i].value === val) {
-                    document.getElementById('customPrice').value = opts[i].getAttribute('data-price');
-                    break;
-                }
-            }
-        }
-
-        function addToCartFromSearch() {
-            const name = document.getElementById('productSearch').value;
-            const price = parseFloat(document.getElementById('customPrice').value);
-            const qty = parseFloat(document.getElementById('prodQty').value);
-            if (!name || isNaN(price)) return alert("Select product!");
-            
-            cart.push({ name, price, qty });
-            renderCart();
-            updatePreview();
-        }
-
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            renderCart();
-            updatePreview();
-        }
-
-        function renderCart() {
-            const tbody = document.getElementById('orderTableBody');
-            tbody.innerHTML = '';
-            
-            const name = document.getElementById('outName').value;
-            const addr = document.getElementById('outAddress').value;
-            const p1 = document.getElementById('outPhone').value;
-            const p2 = document.getElementById('outPhone2').value;
-            const city = document.getElementById('outCity').value;
-            const waybill = document.getElementById('waybillNo').value || "Auto";
-            const orderId = document.getElementById('orderId').value || "Auto";
-
-            let subtotal = 0;
-            let description = cart.map(item => `${item.name} (${item.qty})`).join(", ");
-            
-            cart.forEach(item => subtotal += (item.price * item.qty));
-            
-            const discount = parseFloat(document.getElementById('discountRate').value) || 0;
-            const final = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
-
-            if (cart.length > 0) {
-                tbody.innerHTML = `
-                    <tr class="hover:bg-pink-50/30">
-                        <td class="p-3">1</td>
-                        <td class="p-3 font-bold">${waybill}</td>
-                        <td class="p-3">${orderId}</td>
-                        <td class="p-3 font-bold">${name}</td>
-                        <td class="p-3 text-gray-500">${addr}</td>
-                        <td class="p-3 text-blue-600 font-medium">${description}</td>
-                        <td class="p-3">${p1}</td>
-                        <td class="p-3">${p2}</td>
-                        <td class="p-3 font-black text-red-600">Rs. ${final.toFixed(2)}</td>
-                        <td class="p-3">${city}</td>
-                        <td class="p-3 text-center">
-                            <button onclick="removeFromCart(0)" class="text-red-500 font-bold">✕</button>
-                        </td>
-                    </tr>
-                `;
-            } else {
-                tbody.innerHTML = '<tr><td colspan="11" class="p-10 text-center text-gray-300 italic">No orders added to preview.</td></tr>';
-            }
-
-            document.getElementById('finalPriceDisplay').innerText = final.toFixed(2);
-            document.getElementById('orderCount').innerText = cart.length > 0 ? 1 : 0;
-        }
-
-        function updatePreview() {
-            const name = document.getElementById('outName').value || "...";
-            const address = document.getElementById('outAddress').value || "...";
-            const phone = document.getElementById('outPhone').value || "...";
-            const discount = parseFloat(document.getElementById('discountRate').value) || 0;
-
-            let subtotal = 0;
-            let itemsList = "";
-            cart.forEach((item, i) => {
-                subtotal += (item.price * item.qty);
-                itemsList += `• ${item.name} x${item.qty}\n`;
-            });
-
-            const final = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
-            
-            let msg = `🌸 *C Pearl White - Order* 🌸\n`;
-            msg += `👤 Name: ${name}\n`;
-            msg += `📱 Phone: ${phone}\n`;
-            msg += `📍 Address: ${address}\n\n`;
-            msg += `📦 Items:\n${itemsList || "None"}\n`;
-            msg += `💰 *TOTAL COD: Rs. ${final.toFixed(2)}*`;
-
-            document.getElementById('waPreview').value = msg;
-            renderCart(); // Table එකත් update කරන්න
-        }
-
-        async function formatWithGroq() {
-    let rawText = document.getElementById('rawMessage').value;
-    const btn = document.getElementById('btnText');
-    if (!rawText) return alert("කරුණාකර මැසේජ් එක ඇතුළත් කරන්න!");
-
-    btn.innerText = "Processing... ✨";
-    btn.disabled = true;
-
-    try {
-        const response = await fetch('/format-info', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ rawText: rawText })
-        });
-
-        if (!response.ok) throw new Error('Network response was not ok');
-
-        const data = await response.json();
-        
-        // දෙවැනි App එකේ සාර්ථක වූ ආකාරයටම JSON parse කිරීම
-        const result = JSON.parse(data.choices[0].message.content);
-
-        // HTML Input fields වලට දත්ත දැමීම
-        document.getElementById('outName').value = result.name || "";
-        document.getElementById('outAddress').value = result.address || "";
-		document.getElementById('outCity').value = result.city || "";
-        document.getElementById('outPhone').value = result.phone || "";
-        document.getElementById('outPhone2').value = result.phone2 || "";
-        document.getElementById('outProduct').value = result.Products || "";
-        
-        // වහාම WhatsApp Preview එක update කිරීම (මෙය ඉතා වැදගත්)
-        updatePreview();
-        
-        console.log("Success: Details mapped to fields");
-
-    } catch (error) {
-        console.error("Mapping Error:", error);
-        alert("දත්ත කියවීමේ දෝෂයකි. නැවත උත්සාහ කරන්න.");
-    } finally {
-        btn.innerText = "Format Customer Info ✨";
-        btn.disabled = false;
-    }
-}		
-
-        function shareToWhatsApp() {
-            const message = document.getElementById('waPreview').value;
-            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
-        }
-
-        function saveOrder() {
-    // 1. දැනට Form එකේ ඇති දත්ත ලබා ගැනීම
-    const name = document.getElementById('outName').value;
-    const phone = document.getElementById('outPhone').value;
-    const phone2 = document.getElementById('outPhone2').value || "-";
-    const address = document.getElementById('outAddress').value;
-    const city = document.getElementById('outCity').value;
-    const waybill = document.getElementById('waybillNo').value || "PENDING";
-    const orderId = document.getElementById('orderId').value || "CC-" + Math.floor(Math.random() * 10000);
-
-    // 2. Cart එක පරීක්ෂා කිරීම
-    if (!name || !phone || cart.length === 0) {
-        return alert("කරුණාකර පාරිභෝගික විස්තර සහ අයිතම (Items) ඇතුළත් කරන්න!");
-    }
-
-    // 3. Order Description එක සෑදීම
-    const description = cart.map(item => `${item.name} (${item.qty})`).join(", ");
-
-    // 4. මුළු මුදල ගණනය කිරීම
-    let subtotal = 0;
-    cart.forEach(item => subtotal += (item.price * item.qty));
-    const discount = parseFloat(document.getElementById('discountRate').value) || 0;
-    const finalTotal = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
-
-    // 5. Table එකට අලුත් පේළියක් එකතු කිරීම
-    const tbody = document.getElementById('orderTableBody');
-    
-    // මුලින්ම "No orders added" පණිවිඩය තිබේ නම් එය ඉවත් කිරීම
-    if (tbody.rows.length === 1 && tbody.rows[0].cells.length < 5) {
-        tbody.innerHTML = '';
-    }
-
-    const rowCount = tbody.rows.length + 1;
-    const newRow = `
-        <tr class="hover:bg-pink-50/30 border-b border-gray-100">
-            <td class="p-3">${rowCount}</td>
-            <td class="p-3 font-bold">${waybill}</td>
-            <td class="p-3">${orderId}</td>
-            <td class="p-3 font-bold">${name}</td>
-            <td class="p-3 text-gray-500">${address}</td>
-            <td class="p-3 text-blue-600 font-medium">${description}</td>
-            <td class="p-3">${phone}</td>
-            <td class="p-3">${phone2}</td>
-            <td class="p-3 font-black text-red-600 text-right">Rs. ${finalTotal.toFixed(2)}</td>
-            <td class="p-3">${city}</td>
-            <td class="p-3 text-center">
-                <button onclick="this.parentElement.parentElement.remove(); updateOrderStats();" class="text-red-500 font-bold">✕</button>
-            </td>
-        </tr>
-    `;
-
-    tbody.innerHTML += newRow;
-
-    // 6. Stats (Total Orders & Total COD) Update කිරීම
-    updateOrderStats();
-
-    // 7. Form එක Clear කිරීම (ඊළඟ Order එක සඳහා)
-    clearForm();
-    
-    alert("Order Added to Table! ✅");
-}
-
-// Stats Update කරන ශ්‍රිතය
-function updateOrderStats() {
-    const tbody = document.getElementById('orderTableBody');
-    const rows = tbody.getElementsByTagName('tr');
-    let totalCOD = 0;
-    let count = 0;
-
-    for (let row of rows) {
-        if (row.cells.length > 5) { // Empty row එකක් නොවේ නම්
-            const codText = row.cells[8].innerText.replace('Rs. ', '');
-            totalCOD += parseFloat(codText);
-            count++;
-        }
-    }
-
-    document.getElementById('orderCount').innerText = count;
-    document.getElementById('finalPriceDisplay').innerText = totalCOD.toFixed(2);
-}
-
-// ඊළඟ Order එකට Form එක සූදානම් කිරීම
-function clearForm() {
-    document.getElementById('outName').value = '';
-    document.getElementById('outPhone').value = '';
-    document.getElementById('outPhone2').value = '';
-    document.getElementById('outAddress').value = '';
-    document.getElementById('outCity').value = '';
-    document.getElementById('rawMessage').value = '';
-    cart = []; // Cart එක හිස් කිරීම
-    renderCart();
-    updatePreview();
-}
     </script>
 </body>
 </html>
