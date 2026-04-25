@@ -400,6 +400,8 @@
 			sBody.innerHTML = settingsData.salesPersons.map((s, i) => `
 				<tr>
 					<td class="p-2 border"><b>${s.name}</b><br><span class="text-[10px] text-blue-500">${s.short}</span></td>
+					<td class="p-2 border">${s.shortname}</td>
+					<td class="p-2 border">${s.position}</td>
 					<td class="p-2 border">${s.phone}</td>
 					<td class="p-2 border text-right"><button onclick="removeItem('sales', ${i})" class="text-red-500 font-bold">✕</button></td>
 				</tr>`).join('');
