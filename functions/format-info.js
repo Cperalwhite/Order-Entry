@@ -1,6 +1,12 @@
 export async function onRequestPost(context) {
     const { request, env } = context;
 
+    const corsHeaders = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+    };
+
     try {
         const { rawText } = await request.json();
 
@@ -8,14 +14,14 @@ export async function onRequestPost(context) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${env.GROQ_API_KEY}`
+                'Authorization': `Bearer ${env.GROQ_API_KEY}` 
             },
             body: JSON.stringify({
                 model: "llama-3.3-70b-versatile",
                 messages: [
                     {
                         role: "system",
-                        content: "Extract customer Name, Address, Phone, Phone2, and City from the message. Return ONLY JSON object."
+                        content: "Extract customer Name, Address, Phone, Phone2, and City from the message. Return ONLY a JSON object with keys: name, address, phone, phone2, city."
                     },
                     { role: "user", content: rawText }
                 ],
@@ -26,16 +32,23 @@ export async function onRequestPost(context) {
         const data = await response.json();
         
         return new Response(JSON.stringify(data), {
-            headers: { 
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*' 
-            }
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
 
     } catch (error) {
         return new Response(JSON.stringify({ error: error.message }), { 
             status: 500,
-            headers: { 'Access-Control-Allow-Origin': '*' }
+            headers: corsHeaders 
         });
     }
+}
+
+export async function onRequestOptions() {
+    return new Response(null, {
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type",
+        }
+    });
 }
