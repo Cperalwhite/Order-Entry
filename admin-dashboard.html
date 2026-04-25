@@ -410,7 +410,99 @@ function saveSettings() {
             window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
         }
 
-        function saveOrder() { alert("Saved!"); }
+        function saveOrder() {
+    // 1. දැනට Form එකේ ඇති දත්ත ලබා ගැනීම
+    const name = document.getElementById('outName').value;
+    const phone = document.getElementById('outPhone').value;
+    const phone2 = document.getElementById('outPhone2').value || "-";
+    const address = document.getElementById('outAddress').value;
+    const city = document.getElementById('outCity').value;
+    const waybill = document.getElementById('waybillNo').value || "PENDING";
+    const orderId = document.getElementById('orderId').value || "CC-" + Math.floor(Math.random() * 10000);
+
+    // 2. Cart එක පරීක්ෂා කිරීම
+    if (!name || !phone || cart.length === 0) {
+        return alert("කරුණාකර පාරිභෝගික විස්තර සහ අයිතම (Items) ඇතුළත් කරන්න!");
+    }
+
+    // 3. Order Description එක සෑදීම
+    const description = cart.map(item => `${item.name} (${item.qty})`).join(", ");
+
+    // 4. මුළු මුදල ගණනය කිරීම
+    let subtotal = 0;
+    cart.forEach(item => subtotal += (item.price * item.qty));
+    const discount = parseFloat(document.getElementById('discountRate').value) || 0;
+    const finalTotal = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
+
+    // 5. Table එකට අලුත් පේළියක් එකතු කිරීම
+    const tbody = document.getElementById('orderTableBody');
+    
+    // මුලින්ම "No orders added" පණිවිඩය තිබේ නම් එය ඉවත් කිරීම
+    if (tbody.rows.length === 1 && tbody.rows[0].cells.length < 5) {
+        tbody.innerHTML = '';
+    }
+
+    const rowCount = tbody.rows.length + 1;
+    const newRow = `
+        <tr class="hover:bg-pink-50/30 border-b border-gray-100">
+            <td class="p-3">${rowCount}</td>
+            <td class="p-3 font-bold">${waybill}</td>
+            <td class="p-3">${orderId}</td>
+            <td class="p-3 font-bold">${name}</td>
+            <td class="p-3 text-gray-500">${address}</td>
+            <td class="p-3 text-blue-600 font-medium">${description}</td>
+            <td class="p-3">${phone}</td>
+            <td class="p-3">${phone2}</td>
+            <td class="p-3 font-black text-red-600 text-right">Rs. ${finalTotal.toFixed(2)}</td>
+            <td class="p-3">${city}</td>
+            <td class="p-3 text-center">
+                <button onclick="this.parentElement.parentElement.remove(); updateOrderStats();" class="text-red-500 font-bold">✕</button>
+            </td>
+        </tr>
+    `;
+
+    tbody.innerHTML += newRow;
+
+    // 6. Stats (Total Orders & Total COD) Update කිරීම
+    updateOrderStats();
+
+    // 7. Form එක Clear කිරීම (ඊළඟ Order එක සඳහා)
+    clearForm();
+    
+    alert("Order Added to Table! ✅");
+}
+
+// Stats Update කරන ශ්‍රිතය
+function updateOrderStats() {
+    const tbody = document.getElementById('orderTableBody');
+    const rows = tbody.getElementsByTagName('tr');
+    let totalCOD = 0;
+    let count = 0;
+
+    for (let row of rows) {
+        if (row.cells.length > 5) { // Empty row එකක් නොවේ නම්
+            const codText = row.cells[8].innerText.replace('Rs. ', '');
+            totalCOD += parseFloat(codText);
+            count++;
+        }
+    }
+
+    document.getElementById('orderCount').innerText = count;
+    document.getElementById('finalPriceDisplay').innerText = totalCOD.toFixed(2);
+}
+
+// ඊළඟ Order එකට Form එක සූදානම් කිරීම
+function clearForm() {
+    document.getElementById('outName').value = '';
+    document.getElementById('outPhone').value = '';
+    document.getElementById('outPhone2').value = '';
+    document.getElementById('outAddress').value = '';
+    document.getElementById('outCity').value = '';
+    document.getElementById('rawMessage').value = '';
+    cart = []; // Cart එක හිස් කිරීම
+    renderCart();
+    updatePreview();
+}
     </script>
 </body>
 </html>
