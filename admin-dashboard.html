@@ -166,8 +166,9 @@
     <script>
 	
 		// පිටුව Load වන විටම Login වී ඇත්දැයි පරීක්ෂා කිරීම
-		if (sessionStorage.getItem("isLoggedIn") !== "true") {
-			window.location.replace = "login.html"; // Login වී නැත්නම් ආපසු හරවා යැවීම
+		(function() {
+			if (sessionStorage.getItem("isLoggedIn") !== "true") {
+				window.location.replace = "login.html"; // Login වී නැත්නම් ආපසු හරවා යැවීම
 		}
 	})();
 
