@@ -221,6 +221,46 @@ Charcoal Soap,C-Soap,800</textarea>
             updatePreview();
         }
 
+		// Settings Modal එක පෙන්වීමට හෝ වැසීමට
+function toggleSettings() {
+    const modal = document.getElementById('settingsModal');
+    modal.classList.toggle('hidden');
+}
+
+// Settings දත්ත Save කර Dashboard එක Update කිරීම
+function saveSettings() {
+    // 1. Delivery Charge Update
+    const newDel = parseFloat(document.getElementById('settingDelCharge').value);
+    deliveryCharge = newDel;
+    document.getElementById('delOption').options[0].text = newDel.toFixed(2);
+    document.getElementById('delOption').options[0].value = "yes";
+
+    // 2. Sales Persons Update
+    const salesList = document.getElementById('settingSalesPersons').value.split('\n');
+    const salesSelect = document.getElementById('salesPerson');
+    salesSelect.innerHTML = '<option value="">-- Select --</option>';
+    salesList.forEach(person => {
+        if(person.trim()) {
+            salesSelect.innerHTML += `<option value="${person.trim()}">${person.trim()}</option>`;
+        }
+    });
+
+    // 3. Products Update
+    const prodList = document.getElementById('settingProducts').value.split('\n');
+    const dataList = document.getElementById('productOptions');
+    dataList.innerHTML = '';
+    prodList.forEach(line => {
+        const parts = line.split(',');
+        if(parts.length === 3) {
+            const [name, short, price] = parts;
+            dataList.innerHTML += `<option value="${name.trim()} (${short.trim()})" data-price="${price.trim()}">`;
+        }
+    });
+
+    alert("Settings Saved Successfully! ✅");
+    toggleSettings();
+    updatePreview(); // Preview එකත් Update කරන්න
+}	
         function syncPriceFromSearch() {
             const val = document.getElementById('productSearch').value;
             const opts = document.getElementById('productOptions').options;
