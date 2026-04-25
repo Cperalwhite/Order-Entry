@@ -426,6 +426,25 @@
         </tr>`).join('');
 }
 
+		function editItem(type, index) {
+    if (type === 'sales') {
+        const item = settingsData.salesPersons[index];
+        document.getElementById('salesName').value = item.name;
+        document.getElementById('salesShort').value = item.short;
+        document.getElementById('salesPhone').value = item.phone;
+        // Edit කරන නිසා පරණ එක අයින් කරනවා (Update එකක් ලෙස ක්‍රියා කිරීමට)
+        settingsData.salesPersons.splice(index, 1);
+    } else {
+        const item = settingsData.products[index];
+        document.getElementById('prodName').value = item.name;
+        document.getElementById('prodShort').value = item.short;
+        document.getElementById('prodPrice').value = item.price;
+        settingsData.products.splice(index, 1);
+    }
+    renderSettingsLists();
+    saveSettings(); // LocalStorage එකට update එක සේව් කරන්න
+}
+		
 		// Apply settings to Dashboard UI
 		function applySettingsToDashboard() {
 			// Update Delivery Option
