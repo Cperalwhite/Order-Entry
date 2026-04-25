@@ -210,8 +210,12 @@
                         <button onclick="addNewProduct()" class="bg-pink-600 text-white py-2 rounded font-bold">+ Add</button>
                     </div>
                     <table class="w-full text-xs border">
-                        <thead class="bg-gray-100">
-                            <tr><th class="p-2 text-left border">Product</th><th class="p-2 text-left border">Price</th><th class="p-2 text-right border">Action</th></tr>
+                        <thead class="bg-gray-100 uppercase text-[10px]">
+                            <tr>
+								<th class="p-2 text-left border">Product</th>
+								<th class="p-2 text-left border">Short</th><th class="p-2 text-left border">Price</th>
+								<th class="p-2 text-right border">Action</th>
+						</tr>
                         </thead>
                         <tbody id="settingsProductList" class="divide-y"></tbody>
                     </table>
@@ -410,12 +414,15 @@
 
 			const pBody = document.getElementById('settingsProductList');
 			pBody.innerHTML = settingsData.products.map((p, i) => `
-				<tr>
-					<td class="p-2 border"><b>${p.name}</b></td>
-					<td class="p-2 border">Rs. ${parseFloat(p.price).toFixed(2)}</td>
-					<td class="p-2 border text-right"><button onclick="removeItem('product', ${i})" class="text-red-500 font-bold">✕</button></td>
-				</tr>`).join('');
-		}
+				<tr class="hover:bg-gray-50 text-[11px]">
+            <td class="p-2 border font-bold">${p.name}</td>
+            <td class="p-2 border text-blue-600 font-bold">${p.short || '-'}</td>
+            <td class="p-2 border font-mono">Rs. ${parseFloat(p.price).toFixed(2)}</td>
+            <td class="p-2 border text-right">
+                <button onclick="removeItem('product', ${i})" class="text-red-500 font-bold px-2">✕</button>
+            </td>
+        </tr>`).join('');
+}
 
 		// Apply settings to Dashboard UI
 		function applySettingsToDashboard() {
