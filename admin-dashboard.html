@@ -169,8 +169,10 @@
 		if (sessionStorage.getItem("isLoggedIn") !== "true") {
 			window.location.replace = "login.html"; // Login වී නැත්නම් ආපසු හරවා යැවීම
 		}
+	})();
 
 		function logout() {
+			localStorage.clear();
 			sessionStorage.clear();
 			window.location.replace("login.html");
 		}
