@@ -42,7 +42,7 @@
 				sessionStorage.clear();
 				sessionStorage.setItem("isLoggedIn", "true");
 				setTimeout(() => {
-                window.location.href = "admin-dashboard.html"; // Dashboard එකට යොමු කිරීම
+                window.location.replace = "admin-dashboard.html"; // Dashboard එකට යොමු කිරීම
 				}, 100);
             } else {
                 alert("වැරදි පරිශීලක නාමයක් හෝ මුරපදයක්!");
