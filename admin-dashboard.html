@@ -167,12 +167,12 @@
 	
 		// පිටුව Load වන විටම Login වී ඇත්දැයි පරීක්ෂා කිරීම
 		if (sessionStorage.getItem("isLoggedIn") !== "true") {
-			window.location.href = "login.html"; // Login වී නැත්නම් ආපසු හරවා යැවීම
+			window.location.replace = "login.html"; // Login වී නැත්නම් ආපසු හරවා යැවීම
 		}
 
 		function logout() {
-			sessionStorage.removeItem("isLoggedIn");
-			window.location.href = "login.html";
+			sessionStorage.clear();
+			window.location.replace("login.html");
 		}
 	
         let cart = [];
