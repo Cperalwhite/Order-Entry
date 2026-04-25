@@ -386,12 +386,10 @@ function saveSettings() {
         // HTML Input fields වලට දත්ත දැමීම
         document.getElementById('outName').value = result.name || "";
         document.getElementById('outAddress').value = result.address || "";
+		document.getElementById('outCity').value = result.city || "";
         document.getElementById('outPhone').value = result.phone || "";
         document.getElementById('outPhone2').value = result.phone2 || "";
-        
-        // outProduct කියන field එක තියෙනවා නම් ඒකට city එක හරි product එක හරි දාන්න
-        if(document.getElementById('outProduct')) {
-            document.getElementById('outProduct').value = result.city || "";
+        document.getElementById('outProduct').value = result.Products || "";
         }
 
         // වහාම WhatsApp Preview එක update කිරීම (මෙය ඉතා වැදගත්)
