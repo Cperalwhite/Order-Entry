@@ -432,7 +432,7 @@
         document.getElementById('newSalesName').value = item.name;
         document.getElementById('newSalesShort').value = item.short;
         document.getElementById('newSalesPhone').value = item.phone;
-        // Edit කරන නිසා පරණ එක අයින් කරනවා (Update එකක් ලෙස ක්‍රියා කිරීමට)
+        
         settingsData.salesPersons.splice(index, 1);
     } else {
         const item = settingsData.products[index];
@@ -441,8 +441,7 @@
         document.getElementById('newProdPrice').value = item.price;
         settingsData.products.splice(index, 1);
     }
-    renderSettingsLists();
-    saveSettings(); // LocalStorage එකට update එක සේව් කරන්න
+    renderSettingsLists(); 
 }
 		
 		// Apply settings to Dashboard UI
