@@ -37,14 +37,14 @@
             const user = document.getElementById('username').value.trim();
             const pass = document.getElementById('password').value.trim();
 
+            localStorage.clear();
+            sessionStorage.clear();
+
             // ඔබගේ නිවැරදි Username සහ Password මෙහි ඇතුළත් කරන්න
             if(user === "user" && pass === "123") {
-                // පැරණි session දත්ත මකා අලුත් එකක් සෙට් කිරීම
-                sessionStorage.clear();
+                
                 sessionStorage.setItem("isLoggedIn", "true");
-                
-                console.log("Redirecting to dashboard...");
-                
+                                              
                 // නිවැරදි Redirect ක්‍රමය (වරහන් සහිතව)
                 window.location.replace("admin-dashboard.html");
             } else {
