@@ -1,13 +1,6 @@
 export async function onRequestPost(context) {
     const { request, env } = context;
 
-    // CORS Headers
-    const corsHeaders = {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
-    };
-
     try {
         const { rawText } = await request.json();
 
@@ -15,7 +8,7 @@ export async function onRequestPost(context) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${env.GROQ_API_KEY}` 
+                'Authorization': `Bearer ${env.GROQ_API_KEY}`
             },
             body: JSON.stringify({
                 model: "llama-3.3-70b-versatile",
@@ -34,26 +27,15 @@ export async function onRequestPost(context) {
         
         return new Response(JSON.stringify(data), {
             headers: { 
-                ...corsHeaders,
-                'Content-Type': 'application/json' 
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*' 
             }
         });
 
     } catch (error) {
         return new Response(JSON.stringify({ error: error.message }), { 
             status: 500,
-            headers: corsHeaders 
+            headers: { 'Access-Control-Allow-Origin': '*' }
         });
     }
-}
-
-// OPTIONS request එකට ප්‍රතිචාර දැක්වීම (CORS සඳහා අත්‍යවශ්‍යයි)
-export async function onRequestOptions() {
-    return new Response(null, {
-        headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "POST, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type",
-        },
-    });
 }
