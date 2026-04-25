@@ -429,16 +429,16 @@
 		function editItem(type, index) {
     if (type === 'sales') {
         const item = settingsData.salesPersons[index];
-        document.getElementById('salesName').value = item.name;
-        document.getElementById('salesShort').value = item.short;
-        document.getElementById('salesPhone').value = item.phone;
+        document.getElementById('newSalesName').value = item.name;
+        document.getElementById('newSalesShort').value = item.short;
+        document.getElementById('newSalesPhone').value = item.phone;
         // Edit කරන නිසා පරණ එක අයින් කරනවා (Update එකක් ලෙස ක්‍රියා කිරීමට)
         settingsData.salesPersons.splice(index, 1);
     } else {
         const item = settingsData.products[index];
-        document.getElementById('prodName').value = item.name;
-        document.getElementById('prodShort').value = item.short;
-        document.getElementById('prodPrice').value = item.price;
+        document.getElementById('newProdName').value = item.name;
+        document.getElementById('newProdShort').value = item.short;
+        document.getElementById('newProdPrice').value = item.price;
         settingsData.products.splice(index, 1);
     }
     renderSettingsLists();
