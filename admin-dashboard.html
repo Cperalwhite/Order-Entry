@@ -31,21 +31,30 @@
 
     <div class="flex flex-col lg:flex-row min-h-screen">
         
-        <div class="w-full lg:w-[400px] bg-white border-r border-gray-200 flex flex-col h-screen sticky top-14 overflow-y-auto pb-20">
-            <div class="flex border-b">
-                <button class="flex-1 py-3 text-[11px] font-bold text-gray-400">✏️ MANUAL ENTRY</button>
-                <button class="flex-1 py-3 text-[11px] font-bold tab-active">📋 PASTE & IMPORT</button>
-            </div>
+        <div class="w-full lg:w-[350px] bg-white border-r border-gray-200 flex flex-col h-screen sticky top-14 overflow-y-auto pb-20">
+            <div class="flex border-b bg-gray-50/50 min-h-[50px] items-center px-4">
+				<span class="text-[10px] font-black text-pink-600 uppercase tracking-widest">🚀 Paste & Import Mode</span>
+    		</div>
 
-            <div class="p-4 space-y-5">
-                <section>
-                    <span class="input-label">🆔 IDS</span>
-                    <div class="grid grid-cols-2 gap-3">
-                        <input type="text" id="waybillNo" placeholder="Waybill (Auto)" class="w-full border rounded p-2 bg-gray-50 text-xs">
-                        <input type="text" id="orderId" placeholder="Order ID (Auto)" class="w-full border rounded p-2 bg-gray-50 text-xs">
-                    </div>
-                </section>
+			div class="p-4 space-y-5">
+				<section>
+            		<span class="input-label">🆔 IDS</span>
+            		<div class="grid grid-cols-2 gap-3">
+						<input type="text" id="waybillNo" placeholder="Waybill (Auto)" class="w-full border rounded p-2 bg-gray-50 text-xs">
+                		<input type="text" id="orderId" placeholder="Order ID (Auto)" class="w-full border rounded p-2 bg-gray-50 text-xs">
+           			</div>
+					</section>
 
+					<section>
+            			<span class="input-label">📋 DETAILS</span>
+            			<div class="grid grid-cols-2 gap-3">
+                			<select id="salesPerson" class="w-full border rounded p-2 text-xs font-semibold">
+                    			<option value="">-- Select --</option>
+                			</select>
+                			<input type="date" id="orderDate" value="2026-04-26" class="w-full border rounded p-2 text-xs">
+            		</div>
+        		</section>
+			
                 <section>
                     <span class="input-label">📋 DETAILS</span>
                     <div class="grid grid-cols-2 gap-3">
