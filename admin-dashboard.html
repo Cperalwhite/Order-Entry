@@ -230,10 +230,41 @@ function toggleSettings() {
 // Settings දත්ත Save කර Dashboard එක Update කිරීම
 function saveSettings() {
     // 1. Delivery Charge Update
-    const newDel = parseFloat(document.getElementById('settingDelCharge').value);
-    deliveryCharge = newDel;
-    document.getElementById('delOption').options[0].text = newDel.toFixed(2);
-    document.getElementById('delOption').options[0].value = "yes";
+    const data = {
+        del_charge: document.getElementById('settingDelCharge').value,
+        sales_persons: document.getElementById('settingSalesPersons').value,
+        products: document.getElementById('settingProducts').value
+    };
+
+    const btn = event.target;
+    btn.innerText = "Save";
+
+	const response = await fetch('/manage-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+
+	if (response.ok) {
+        applySettingsToDashboard(data.del_charge, data.sales_persons, data.products);
+        alert("Settings Synced to Cloudflare! ☁️✅");
+        toggleSettings();
+    }
+    btn.innerText = "SAVE SETTINGS";
+}
+
+	window.addEventListener('DOMContentLoaded', async () => {
+    const response = await fetch('/manage-settings');
+    if (response.ok) {
+        const data = await response.json();
+        if (data) {
+            document.getElementById('settingDelCharge').value = data.del_charge;
+            document.getElementById('settingSalesPersons').value = data.sales_persons;
+            document.getElementById('settingProducts').value = data.products;
+            applySettingsToDashboard(data.del_charge, data.sales_persons, data.products);
+        }
+    }
+});
 
     // 2. Sales Persons Update
     const salesList = document.getElementById('settingSalesPersons').value.split('\n');
