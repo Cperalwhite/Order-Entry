@@ -5,18 +5,38 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>C Pearl White | Order Entry</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getDatabase, ref, set, get, push, remove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
-const cfg={apiKey:"AIzaSyBGoeRwb6VlEknQKaLSOSY2tyBUeLJzEI4",authDomain:"c-pearl-white.firebaseapp.com",databaseURL:"https://c-pearl-white-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"c-pearl-white",storageBucket:"c-pearl-white.firebasestorage.app",messagingSenderId:"647160306453",appId:"1:647160306453:web:646b71814ff5534560671c"};
-const app=initializeApp(cfg);const db=getDatabase(app);
-window._fbSet=(p,d)=>set(ref(db,p),d);
-window._fbGet=(p)=>get(ref(db,p)).then(s=>s.exists()?s.val():null);
-window._fbPush=(p,d)=>push(ref(db,p),d);
-window._fbRemove=(p)=>remove(ref(db,p));
-window._fbReady=true;window.dispatchEvent(new Event('fbready'));
+<script>
+<script>
+    window._dbGet = async (path) => {
+        const res = await fetch(`/api/manage-orders?path=${encodeURIComponent(path)}`);
+        return res.ok ? await res.json() : null;
+    };
+
+    window._dbSet = async (path, data) => {
+        const res = await fetch(`/api/manage-orders`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ path, ...data })
+        });
+        return res.ok;
+    };
+
+    // පද්ධතිය ආරම්භයේදී දත්ත ලබා ගැනීම
+    async function initApp() {
+        try {
+            // මෙතැනදී කලින් Firebase එකෙන් ගත්ත Products සහ SP list එක Cloudflare වලින් ගනී
+            const config = await _dbGet('c-pearl-white/config');
+            if (config) {
+                // ඔබගේ පවතින Dropdowns update කිරීමට අවශ්‍ය logic එක මෙතැනට
+                console.log("Config loaded from Cloudflare D1");
+            }
+        } catch (err) {
+            console.error("Initialization failed:", err);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', initApp);
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{--rose:#c8526b;--blush:#f2d4d9;--cream:#fdf6f0;--gold:#c9a96e;--dark:#2a1a1f;--muted:#8a6d73;--green:#25D366;--bg:#f5edf0;--panel:#fff;}
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -568,12 +588,12 @@ function switchTab(name){
 async function loadAdminData(){
   try{
     // Load SPs from store config
-    const cfg = await window._fbGet('ladyparadise/config');
+    const cfg = await window._fbGet('c-pearl-white/config');
     if(cfg && cfg.salesPersons && cfg.salesPersons.length){
       sps = cfg.salesPersons.map(sp=>({...sp, orders: sp.orders||0}));
     }
     // Load products from tool admin (separate path)
-    const toolCfg = await window._fbGet('ladyparadise/toolConfig');
+    const toolCfg = await window._fbGet('c-pearl-white/toolConfig');
     if(toolCfg && toolCfg.products) products = toolCfg.products;
     if(toolCfg && toolCfg.salesPersons) sps = toolCfg.salesPersons; // tool admin overrides
   } catch(e){
@@ -603,7 +623,7 @@ async function updateCtr(){
   const sp = sps.find(s=>s.id===spId);
   nmEl.textContent = sp ? sp.name : spId;
   try{
-    const all = await window._fbGet('ladyparadise/orders');
+    const all = await window._fbGet('c-pearl-white/orders');
     numEl.textContent = all
       ? Object.values(all).filter(o=>o.spId===spId && o.date===date).length
       : 0;
@@ -617,7 +637,7 @@ function onDateChange(){ updateCtr(); }
 // ═══════════════════════════════════════════════════════
 async function recalcCount(){
   try{
-    const all = await window._fbGet('ladyparadise/orders');
+    const all = await window._fbGet('c-pearl-white/orders');
     gCount = all ? Object.keys(all).length : 0;
   } catch{ gCount=0; }
 }
@@ -748,7 +768,7 @@ document.getElementById('manForm').addEventListener('submit', async function(e){
   btn.disabled=true; btn.innerHTML='<div class="spin"></div> Saving...';
   try{
     await fbR();
-    await window._fbPush('ladyparadise/orders', order);
+    await window._fbPush('c-pearl-white/orders', order);
     toast('✅ Order saved!');
     resetManForm();
     await recalcCount();
@@ -952,7 +972,7 @@ async function addParsed(){
   btn.disabled=true; btn.textContent='Saving...';
   try{
     await fbR();
-    await window._fbPush('ladyparadise/orders', order);
+    await window._fbPush('c-pearl-white/orders', order);
     toast('✅ Order imported!');
     document.getElementById('pArea').value='';
     document.getElementById('pprev').style.display='none';
@@ -974,7 +994,7 @@ async function loadOrders(){
   const fs=document.getElementById('fSp').value;
   try{
     await fbR();
-    const all=await window._fbGet('ladyparadise/orders');
+    const all=await window._fbGet('c-pearl-white/orders');
     if(!all){ renderEmptyTbl(); updStats([]); renderSpBar([]); return; }
     let list=Object.entries(all).map(([k,v])=>({...v,_k:k}));
     list.sort((a,b)=>(a.ts||0)-(b.ts||0));
@@ -1043,7 +1063,7 @@ function renderSpBar(list){
 async function delOrd(k){
   if(!confirm('Delete this order?')) return;
   try{
-    await fbR(); await window._fbRemove('ladyparadise/orders/'+k);
+    await fbR(); await window._fbRemove('c-pearl-white/orders/'+k);
     toast('🗑 Deleted'); await loadOrders(); await recalcCount(); updateCtr();
   } catch{ toast('❌ Delete failed',true); }
 }
@@ -1052,7 +1072,7 @@ async function clearFiltered(){
   if(!confirm(`Delete ALL ${orders.length} filtered orders?`)) return;
   try{
     await fbR();
-    for(const o of orders) await window._fbRemove('ladyparadise/orders/'+o._k);
+    for(const o of orders) await window._fbRemove('c-pearl-white/orders/'+o._k);
     toast('✅ Cleared'); await loadOrders(); await recalcCount(); updateCtr();
   } catch{ toast('❌ Clear failed',true); }
 }
@@ -1211,11 +1231,11 @@ async function saveAdmin(){
   try{
     await fbR();
     // Save to tool config (separate from store config)
-    await window._fbSet('ladyparadise/toolConfig',{ salesPersons:sps, products });
+    await window._fbSet('c-pearl-white/toolConfig',{ salesPersons:sps, products });
     // Also sync SPs back to store config
-    const storeCfg = await window._fbGet('ladyparadise/config') || {};
+    const storeCfg = await window._fbGet('c-pearl-white/config') || {};
     storeCfg.salesPersons = sps;
-    await window._fbSet('ladyparadise/config', storeCfg);
+    await window._fbSet('c-pearl-white/config', storeCfg);
 
     // Refresh SP dropdowns everywhere
     ['mSp','pSp','fSp'].forEach(selId=>{
