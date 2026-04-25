@@ -407,8 +407,9 @@
             	<td class="p-2 border font-bold">${s.name}</td>
             	<td class="p-2 border text-pink-600 font-bold">${s.short}</td>
             	<td class="p-2 border">${s.phone}</td>
-            	<td class="p-2 border text-right">
-                	<button onclick="removeItem('sales', ${i})" class="text-red-500 font-bold px-2">✕</button>
+            	<td class="p-2 border text-right space-x-2">
+					<button onclick="editItem('sales', ${i})" class="text-blue-500 hover:text-blue-700 font-bold">EDIT</button>
+                	<button onclick="removeItem('sales', ${i})" class="text-red-500 font-bold">✕</button>
             	</td>
         	</tr>`).join('');
 
@@ -418,8 +419,9 @@
             <td class="p-2 border font-bold">${p.name}</td>
             <td class="p-2 border text-blue-600 font-bold">${p.short || '-'}</td>
             <td class="p-2 border font-mono">Rs. ${parseFloat(p.price).toFixed(2)}</td>
-            <td class="p-2 border text-right">
-                <button onclick="removeItem('product', ${i})" class="text-red-500 font-bold px-2">✕</button>
+            <td class="p-2 border text-right space-x-2">
+				<button onclick="editItem('product', ${i})" class="text-blue-500 hover:text-blue-700 font-bold">EDIT</button>
+                <button onclick="removeItem('product', ${i})" class="text-red-500 font-bold">✕</button>
             </td>
         </tr>`).join('');
 }
