@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - C Pearl White</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .header-bg { background-color: #2D1B1B; }
+        .btn-pink { background-color: #C08497; }
+    </style>
+</head>
+<body class="bg-[#FDF8F8] flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-2xl shadow-xl border border-pink-100 w-full max-w-md">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl italic font-serif text-[#2D1B1B]">C Pearl <span class="font-normal">White</span></h1>
+            <p class="text-gray-400 text-sm mt-2 uppercase tracking-widest font-bold">Admin Login</p>
+        </div>
+        
+        <form class="space-y-6" onsubmit="handleLogin(event)">
+            <div>
+                <label class="block text-[11px] font-bold text-[#C08497] uppercase mb-1">Username</label>
+                <input type="text" id="username" class="w-full border rounded-lg p-3 text-sm focus:outline-pink-200" required>
+            </div>
+            <div>
+                <label class="block text-[11px] font-bold text-[#C08497] uppercase mb-1">Password</label>
+                <input type="password" id="password" class="w-full border rounded-lg p-3 text-sm focus:outline-pink-200" required>
+            </div>
+            <button type="submit" class="w-full btn-pink text-white py-3 rounded-lg font-bold shadow-md hover:opacity-90 transition">LOG IN</button>
+        </form>
+    </div>
+
+    <script>
+        function handleLogin(e) {
+            e.preventDefault();
+            // මෙතැනදී ඔබට ඔබගේ Backend එක හරහා Authentication සිදු කළ හැක.
+            // සරල පරීක්ෂණයක් සඳහා:
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+
+            if(user === "user" && pass === "123") {
+                window.location.href = "admin-dashboard.html"; // Dashboard එකට යොමු කිරීම
+            } else {
+                alert("වැරදි පරිශීලක නාමයක් හෝ මුරපදයක්!");
+            }
+        }
+    </script>
+</body>
+</html>
