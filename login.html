@@ -39,6 +39,7 @@
             const pass = document.getElementById('password').value;
 
             if(user === "user" && pass === "123") {
+				sessionStorage.clear();
 				sessionStorage.setItem("isLoggedIn", "true");
 				setTimeout(() => {
                 window.location.href = "admin-dashboard.html"; // Dashboard එකට යොමු කිරීම
