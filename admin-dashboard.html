@@ -221,77 +221,117 @@ Charcoal Soap,C-Soap,800</textarea>
             updatePreview();
         }
 
-		// Settings Modal එක පෙන්වීමට හෝ වැසීමට
+		// 1. Settings Modal එක පෙන්වීමට සහ වැසීමට
 function toggleSettings() {
     const modal = document.getElementById('settingsModal');
-    modal.classList.toggle('hidden');
+    if (modal) {
+        modal.classList.toggle('hidden');
+    }
 }
 
-// Settings දත්ත Save කර Dashboard එක Update කිරීම
-function saveSettings() {
-    // 1. Delivery Charge Update
+// 2. දත්ත Dashboard එකේ Dropdowns සහ Lists වලට ඇතුළත් කරන ප්‍රධාන ශ්‍රිතය
+function applySettingsToDashboard(del, sales, prods) {
+    // Delivery Charge Update
+    deliveryCharge = parseFloat(del) || 0;
+    const delOption = document.getElementById('delOption');
+    if(delOption && delOption.options[0]) {
+        delOption.options[0].text = deliveryCharge.toFixed(2);
+        delOption.options[0].value = "yes";
+    }
+
+    // Sales Persons Dropdown Update
+    const salesSelect = document.getElementById('salesPerson');
+    if(salesSelect && sales) {
+        salesSelect.innerHTML = '<option value="">-- Select --</option>';
+        sales.split('\n').forEach(person => {
+            if(person.trim()) {
+                const pName = person.trim();
+                salesSelect.innerHTML += `<option value="${pName}">${pName}</option>`;
+            }
+        });
+    }
+
+    // Products Datalist Update
+    const dataList = document.getElementById('productOptions');
+    if(dataList && prods) {
+        dataList.innerHTML = '';
+        prods.split('\n').forEach(line => {
+            const parts = line.split(',');
+            if(parts.length === 3) {
+                const [name, short, price] = parts;
+                dataList.innerHTML += `<option value="${name.trim()} (${short.trim()})" data-price="${price.trim()}">`;
+            }
+        });
+    }
+    
+    // Preview එක අලුත් මිල ගණන් අනුව Update කිරීම
+    if (typeof updatePreview === "function") updatePreview();
+}
+
+// 3. Settings දත්ත Cloudflare D1 වෙත Save කිරීම
+async function saveSettings() {
+    const delVal = document.getElementById('settingDelCharge').value;
+    const salesVal = document.getElementById('settingSalesPersons').value;
+    const prodsVal = document.getElementById('settingProducts').value;
+
     const data = {
-        del_charge: document.getElementById('settingDelCharge').value,
-        sales_persons: document.getElementById('settingSalesPersons').value,
-        products: document.getElementById('settingProducts').value
+        del_charge: delVal,
+        sales_persons: salesVal,
+        products: prodsVal
     };
 
-    const btn = event.target;
-    btn.innerText = "Save";
-
-	const response = await fetch('/manage-settings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    });
-
-	if (response.ok) {
-        applySettingsToDashboard(data.del_charge, data.sales_persons, data.products);
-        alert("Settings Synced to Cloudflare! ☁️✅");
-        toggleSettings();
+    // Button එකේ පෙනුම වෙනස් කිරීම
+    const btn = event ? event.target : null;
+    let originalText = "";
+    if (btn) {
+        originalText = btn.innerText;
+        btn.innerText = "Saving... ⏳";
+        btn.disabled = true;
     }
-    btn.innerText = "SAVE SETTINGS";
+
+    try {
+        const response = await fetch('/manage-settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            applySettingsToDashboard(delVal, salesVal, prodsVal);
+            alert("Settings Synced to Cloudflare! ☁️✅");
+            toggleSettings();
+        } else {
+            alert("Error: සර්වර් එකට දත්ත සේව් කිරීමට නොහැකි විය.");
+        }
+    } catch (error) {
+        console.error("Settings Error:", error);
+        alert("සම්බන්ධතා දෝෂයකි. කරුණාකර නැවත උත්සාහ කරන්න.");
+    } finally {
+        if (btn) {
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
+    }
 }
 
-	window.addEventListener('DOMContentLoaded', async () => {
-    const response = await fetch('/manage-settings');
-    if (response.ok) {
-        const data = await response.json();
-        if (data) {
-            document.getElementById('settingDelCharge').value = data.del_charge;
-            document.getElementById('settingSalesPersons').value = data.sales_persons;
-            document.getElementById('settingProducts').value = data.products;
-            applySettingsToDashboard(data.del_charge, data.sales_persons, data.products);
+// 4. පිටුව Load වන විට Cloud එකෙන් Settings ලබා ගැනීම
+window.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const response = await fetch('/manage-settings');
+        if (response.ok) {
+            const data = await response.json();
+            if (data) {
+                if(document.getElementById('settingDelCharge')) document.getElementById('settingDelCharge').value = data.del_charge;
+                if(document.getElementById('settingSalesPersons')) document.getElementById('settingSalesPersons').value = data.sales_persons;
+                if(document.getElementById('settingProducts')) document.getElementById('settingProducts').value = data.products;
+                
+                applySettingsToDashboard(data.del_charge, data.sales_persons, data.products);
+            }
         }
+    } catch (error) {
+        console.log("Settings load error - using defaults.");
     }
-});
-
-    // 2. Sales Persons Update
-    const salesList = document.getElementById('settingSalesPersons').value.split('\n');
-    const salesSelect = document.getElementById('salesPerson');
-    salesSelect.innerHTML = '<option value="">-- Select --</option>';
-    salesList.forEach(person => {
-        if(person.trim()) {
-            salesSelect.innerHTML += `<option value="${person.trim()}">${person.trim()}</option>`;
-        }
-    });
-
-    // 3. Products Update
-    const prodList = document.getElementById('settingProducts').value.split('\n');
-    const dataList = document.getElementById('productOptions');
-    dataList.innerHTML = '';
-    prodList.forEach(line => {
-        const parts = line.split(',');
-        if(parts.length === 3) {
-            const [name, short, price] = parts;
-            dataList.innerHTML += `<option value="${name.trim()} (${short.trim()})" data-price="${price.trim()}">`;
-        }
-    });
-
-    alert("Settings Saved Successfully! ✅");
-    toggleSettings();
-    updatePreview(); // Preview එකත් Update කරන්න
-}	
+});	
         function syncPriceFromSearch() {
             const val = document.getElementById('productSearch').value;
             const opts = document.getElementById('productOptions').options;
