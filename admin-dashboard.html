@@ -362,32 +362,51 @@ function saveSettings() {
         }
 
         async function formatWithGroq() {
-            let rawText = document.getElementById('rawMessage').value;
-            const btn = document.getElementById('btnText');
-            if (!rawText) return alert("Paste message!");
-            btn.innerText = "Wait...";
-            btn.disabled = true;
-            try {
-                const response = await fetch('/format-info', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ rawText: rawText })
-                });
-                const data = await response.json();
-                const result = JSON.parse(data.choices[0].message.content);
-                document.getElementById('outName').value = result.name || "";
-                document.getElementById('outAddress').value = result.address || "";
-                document.getElementById('outPhone').value = result.phone || "";
-                document.getElementById('outPhone2').value = result.phone2 || "";
-                document.getElementById('outCity').value = result.city || "";
-                updatePreview();
-            } catch (error) {
-                alert("AI Error!");
-            } finally {
-                btn.innerText = "Format Info ✨";
-                btn.disabled = false;
-            }
+    let rawText = document.getElementById('rawMessage').value;
+    const btn = document.getElementById('btnText');
+    if (!rawText) return alert("කරුණාකර මැසේජ් එක ඇතුළත් කරන්න!");
+
+    btn.innerText = "Processing... ✨";
+    btn.disabled = true;
+
+    try {
+        const response = await fetch('/format-info', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ rawText: rawText })
+        });
+
+        if (!response.ok) throw new Error('Network response was not ok');
+
+        const data = await response.json();
+        
+        // දෙවැනි App එකේ සාර්ථක වූ ආකාරයටම JSON parse කිරීම
+        const result = JSON.parse(data.choices[0].message.content);
+
+        // HTML Input fields වලට දත්ත දැමීම
+        document.getElementById('outName').value = result.name || "";
+        document.getElementById('outAddress').value = result.address || "";
+        document.getElementById('outPhone').value = result.phone || "";
+        document.getElementById('outPhone2').value = result.phone2 || "";
+        
+        // outProduct කියන field එක තියෙනවා නම් ඒකට city එක හරි product එක හරි දාන්න
+        if(document.getElementById('outProduct')) {
+            document.getElementById('outProduct').value = result.city || "";
         }
+
+        // වහාම WhatsApp Preview එක update කිරීම (මෙය ඉතා වැදගත්)
+        updatePreview();
+        
+        console.log("Success: Details mapped to fields");
+
+    } catch (error) {
+        console.error("Mapping Error:", error);
+        alert("දත්ත කියවීමේ දෝෂයකි. නැවත උත්සාහ කරන්න.");
+    } finally {
+        btn.innerText = "Format Customer Info ✨";
+        btn.disabled = false;
+    }
+}
 
         function shareToWhatsApp() {
             const message = document.getElementById('waPreview').value;
