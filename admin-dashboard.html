@@ -390,8 +390,7 @@ function saveSettings() {
         document.getElementById('outPhone').value = result.phone || "";
         document.getElementById('outPhone2').value = result.phone2 || "";
         document.getElementById('outProduct').value = result.Products || "";
-        }
-
+        
         // වහාම WhatsApp Preview එක update කිරීම (මෙය ඉතා වැදගත්)
         updatePreview();
         
@@ -404,6 +403,7 @@ function saveSettings() {
         btn.innerText = "Format Customer Info ✨";
         btn.disabled = false;
     }
+}		
 
         function shareToWhatsApp() {
             const message = document.getElementById('waPreview').value;
