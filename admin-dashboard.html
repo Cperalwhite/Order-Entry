@@ -164,38 +164,79 @@
         </div>
     </div>
 
-	<div id="settingsModal" class="fixed inset-0 bg-black/50 hidden z-[100] flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
-        <div class="header-bg p-4 flex justify-between items-center text-white">
-            <h2 class="font-bold uppercase tracking-widest text-sm">⚙️ System Settings</h2>
-            <button onclick="toggleSettings()" class="text-2xl">&times;</button>
-        </div>
+	<div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-white w-full max-w-4xl h-[500px] rounded-xl shadow-2xl flex overflow-hidden">
         
-        <div class="p-6 space-y-6">
-            <section class="border-b pb-4">
-                <label class="input-label">🚚 Default Delivery Charge (Rs.)</label>
-                <input type="number" id="settingDelCharge" value="425" class="w-full border rounded p-2 text-sm font-bold">
-            </section>
+        <div class="w-1/3 bg-gray-100 border-r flex flex-col">
+            <div class="p-4 border-b bg-pink-600 text-white font-bold">⚙️ Settings</div>
+            <nav class="flex-1 p-2 space-y-1">
+                <button onclick="showTab('salesTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition active-tab" id="btn-salesTab">
+                    👤 Sales Team
+                </button>
+                <button onclick="showTab('productsTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition" id="btn-productsTab">
+                    🛍 Manage Products
+                </button>
+                <button onclick="showTab('deliveryTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition" id="btn-deliveryTab">
+                    🚚 Delivery Charges
+                </button>
+            </nav>
+            <div class="p-4 border-t space-y-2">
+                <button onclick="saveSettings()" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700">SAVE ALL</button>
+                <button onclick="toggleSettings()" class="w-full bg-gray-300 text-gray-700 py-2 rounded-lg font-bold">CLOSE</button>
+            </div>
+        </div>
 
-            <section class="border-b pb-4">
-                <label class="input-label">👤 Sales Persons (එක පේළියකට එක් අයෙක් බැගින්)</label>
-                <textarea id="settingSalesPersons" rows="3" class="w-full border rounded p-2 text-xs font-mono">Kamal - 0712345678
-Nimal - 0778765432</textarea>
-            </section>
+        <div class="w-2/3 p-6 overflow-y-auto bg-white">
+            
+            <div id="salesTab" class="tab-content">
+                <h2 class="text-xl font-bold mb-4 text-blue-600">Manage Sales Team</h2>
+                <div class="grid grid-cols-2 gap-2 mb-4 bg-blue-50 p-3 rounded-lg border border-blue-100">
+                    <input type="text" id="newSalesName" placeholder="Full Name" class="p-2 border rounded text-sm">
+                    <input type="text" id="newSalesShort" placeholder="Short Name" class="p-2 border rounded text-sm">
+                    <input type="text" id="newSalesPhone" placeholder="Mobile Number" class="p-2 border rounded text-sm">
+                    <input type="text" id="newSalesPos" placeholder="Position" class="p-2 border rounded text-sm">
+                    <button onclick="addNewSalesPerson()" class="col-span-2 bg-blue-600 text-white py-2 rounded font-bold">+ Add Person</button>
+                </div>
+                <table class="w-full text-xs border">
+                    <thead class="bg-gray-100">
+                        <tr><th class="p-2 text-left border">Name</th><th class="p-2 text-left border">Mobile</th><th class="p-2 text-right border">Action</th></tr>
+                    </thead>
+                    <tbody id="settingsSalesList" class="divide-y"></tbody>
+                </table>
+            </div>
 
-            <section>
-                <label class="input-label">🛍 Products & Prices (Format: Name,ShortName,Price)</label>
-                <textarea id="settingProducts" rows="5" class="w-full border rounded p-2 text-xs font-mono">VIP Night Face Cream,V-Face,3000
-Vip Night Body Cream,V-Body,5000
-Night Serum,N-Serum,2500
-Charcoal Soap,C-Soap,800</textarea>
-                <p class="text-[10px] text-gray-400 mt-1">* එක් පේළියකට එක බැගින් ඇතුළත් කරන්න.</p>
-            </section>
+            <div id="productsTab" class="tab-content hidden">
+                <h2 class="text-xl font-bold mb-4 text-pink-600">Manage Products</h2>
+                <div class="grid grid-cols-3 gap-2 mb-4 bg-pink-50 p-3 rounded-lg border border-pink-100">
+                    <input type="text" id="newProdName" placeholder="Product Name" class="p-2 border rounded text-sm col-span-2">
+                    <input type="text" id="newProdShort" placeholder="Short" class="p-2 border rounded text-sm">
+                    <input type="number" id="newProdPrice" placeholder="Price" class="p-2 border rounded text-sm col-span-2">
+                    <button onclick="addNewProduct()" class="bg-pink-600 text-white py-2 rounded font-bold">+ Add</button>
+                </div>
+                <table class="w-full text-xs border">
+                    <thead class="bg-gray-100">
+                        <tr><th class="p-2 text-left border">Product</th><th class="p-2 text-left border">Price</th><th class="p-2 text-right border">Action</th></tr>
+                    </thead>
+                    <tbody id="settingsProductList" class="divide-y"></tbody>
+                </table>
+            </div>
 
-            <button onclick="saveSettings()" class="w-full btn-pink text-white py-3 rounded-lg font-bold shadow-md">SAVE SETTINGS 💾</button>
+            <div id="deliveryTab" class="tab-content hidden">
+                <h2 class="text-xl font-bold mb-4 text-orange-600">Delivery Charges</h2>
+                <div class="bg-orange-50 p-6 rounded-lg border border-orange-100">
+                    <label class="block text-sm font-bold mb-2">Default Delivery Fee (LKR):</label>
+                    <input type="number" id="settingDelCharge" class="w-full p-3 border rounded-lg text-lg font-bold" placeholder="425.00">
+                    <p class="text-xs text-gray-500 mt-2 italic">* This amount will be added to orders by default.</p>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
+
+<style>
+    .active-tab { background-color: #fce7f3 !important; border-left: 4px solid #db2777; color: #db2777; }
+</style>
     <script>
 	
 		// පිටුව Load වන විටම Login වී ඇත්දැයි පරීක්ෂා කිරීම
