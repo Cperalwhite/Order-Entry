@@ -399,13 +399,14 @@
 		function renderSettingsLists() {
 			const sBody = document.getElementById('settingsSalesList');
 			sBody.innerHTML = settingsData.salesPersons.map((s, i) => `
-				<tr>
-					<td class="p-2 border"><b>${s.name}</b><br><span class="text-[10px] text-blue-500">${s.short}</span></td>
-					<td class="p-2 border">${s.shortname}</td>
-					<td class="p-2 border">${s.position}</td>
-					<td class="p-2 border">${s.phone}</td>
-					<td class="p-2 border text-right"><button onclick="removeItem('sales', ${i})" class="text-red-500 font-bold">✕</button></td>
-				</tr>`).join('');
+				<tr class="hover:bg-gray-50 text-[11px]">
+            	<td class="p-2 border font-bold">${s.name}</td>
+            	<td class="p-2 border text-pink-600 font-bold">${s.short}</td>
+            	<td class="p-2 border">${s.phone}</td>
+            	<td class="p-2 border text-right">
+                	<button onclick="removeItem('sales', ${i})" class="text-red-500 font-bold px-2">✕</button>
+            	</td>
+        	</tr>`).join('');
 
 			const pBody = document.getElementById('settingsProductList');
 			pBody.innerHTML = settingsData.products.map((p, i) => `
