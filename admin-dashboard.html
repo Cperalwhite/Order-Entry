@@ -18,6 +18,8 @@
         .side-nav-item:hover { color: rgba(255,255,255,0.85) !important; background: rgba(255,255,255,0.05); }
         .side-nav-item.active { color: #C08497 !important; border-left-color: #C08497; background: rgba(192,132,151,0.08); }
         .section-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.2); padding: 14px 16px 5px; }
+        .view-hidden { display: none !important; }
+        .view-full { width: 100% !important; max-width: 100% !important; flex: 1 1 100% !important; }
     </style>
 </head>
 <body class="bg-[#FDF8F8] font-sans">
@@ -216,6 +218,42 @@
                 <!-- දත්ත මෙතැනට වැටේ -->
             </tbody>
         </table>
+    </div>
+</div>
+
+            <div class="flex-1 p-4 lg:p-6 bg-gray-50 space-y-6 overflow-x-hidden">
+
+    <!-- Dashboard View (Preview Table එක ඇතුළුව දැනට ඇති සියල්ල මෙහි තිබිය යුතුය) -->
+    <div id="dashboardView" class="space-y-6">
+        <!-- දැනට ඔබ සතු සියලුම Stats cards සහ Orders Preview Table එක මෙහි තබන්න -->
+    </div>
+
+    <!-- All Orders View (සම්පූර්ණ තිරය පුරා පෙන්වන වගුව) -->
+    <div id="allOrdersView" class="hidden space-y-6">
+        <div class="bg-white rounded-xl shadow-sm border border-blue-100 overflow-hidden">
+            <div class="header-bg p-4 flex justify-between items-center">
+                <h4 class="text-white text-sm font-bold uppercase tracking-widest">📜 All Database Orders</h4>
+                <button onclick="refreshAllOrders()" class="bg-pink-500/20 text-pink-100 text-xs px-4 py-2 rounded border border-pink-500/40 font-bold uppercase">Refresh</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs text-left border-collapse">
+                    <thead class="bg-gray-100 text-gray-700 uppercase">
+                        <tr>
+                            <th class="p-4 border">#</th>
+                            <th class="p-4 border">Date</th>
+                            <th class="p-4 border">Customer</th>
+                            <th class="p-4 border">Address</th>
+                            <th class="p-4 border">Items</th>
+                            <th class="p-4 border">Total (Rs.)</th>
+                            <th class="p-4 border">Sales Person</th>
+                        </tr>
+                    </thead>
+                    <tbody id="allOrdersTableBody" class="divide-y divide-gray-200">
+                        <!-- Data will load here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
