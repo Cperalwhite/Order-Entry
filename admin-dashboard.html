@@ -739,6 +739,51 @@
         document.getElementById('orderTableBody').innerHTML = '<tr><td colspan="11" class="p-10 text-center text-gray-300 italic">No orders added to preview.</td></tr>';
         updateOrderStats();
     }
+
+    function showAllOrdersSection() {
+    // 1. කලින් තිබුණු Preview Table එක සඟවන්න
+    const previewTable = document.querySelector('.bg-white.rounded-xl.shadow-sm.border.border-pink-100');
+    if (previewTable) previewTable.classList.add('hidden');
+    
+    // 2. All Orders Section එක පෙන්වන්න
+    const allOrdersSec = document.getElementById('allOrdersSection');
+    allOrdersSec.classList.remove('hidden');
+    
+    // 3. දත්ත ගෙන්වා ගන්න
+    refreshAllOrders();
+}
+
+async function refreshAllOrders() {
+    const tbody = document.getElementById('allOrdersTableBody');
+    tbody.innerHTML = '<tr><td colspan="7" class="p-5 text-center animate-pulse">Fetching from Database... ⏳</td></tr>';
+    
+    try {
+        const response = await fetch('/get-all-orders'); 
+        if (response.ok) {
+            const orders = await response.json();
+            tbody.innerHTML = '';
+            if(orders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="p-5 text-center text-gray-400">No orders found in database.</td></tr>';
+                return;
+            }
+            orders.forEach((order, index) => {
+                const row = tbody.insertRow();
+                row.className = "hover:bg-blue-50/50";
+                row.innerHTML = `
+                    <td class="p-3 font-bold text-gray-400">${index + 1}</td>
+                    <td class="p-3 font-medium">${order.order_date || 'N/A'}</td>
+                    <td class="p-3 font-black text-gray-800">${order.name}</td>
+                    <td class="p-3 text-blue-600 font-semibold">${order.items}</td>
+                    <td class="p-3 font-black text-red-600">Rs. ${parseFloat(order.total).toFixed(2)}</td>
+                    <td class="p-3 font-bold text-pink-600">${order.sales_person || '-'}</td>
+                    <td class="p-3"><span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[9px] font-bold">SAVED</span></td>
+                `;
+            });
+        }
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="7" class="p-5 text-center text-red-500 font-bold">❌ Connection Error. check your Backend!</td></tr>';
+    }
+}
 </script>
 </body>
 </html>
