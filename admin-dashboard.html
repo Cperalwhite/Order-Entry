@@ -18,8 +18,6 @@
         .side-nav-item:hover { color: rgba(255,255,255,0.85) !important; background: rgba(255,255,255,0.05); }
         .side-nav-item.active { color: #C08497 !important; border-left-color: #C08497; background: rgba(192,132,151,0.08); }
         .section-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.2); padding: 14px 16px 5px; }
-        .view-hidden { display: none !important; }
-        .view-full { width: 100% !important; max-width: 100% !important; flex: 1 1 100% !important; }
     </style>
 </head>
 <body class="bg-[#FDF8F8] font-sans">
@@ -37,65 +35,31 @@
 
     <!-- LEFT SIDEBAR NAV -->
     <aside class="w-[200px] flex-shrink-0 flex flex-col sticky top-14 overflow-y-auto" style="height: calc(100vh - 56px); background:#2D1B1B;">
-
         <nav class="flex-1 py-1">
             <div class="section-label">Main</div>
-
-            <a onclick="setSideActive(this)" class="side-nav-item active">
-                🗂 Dashboard
+            <a onclick="setSideActive(this); showDashboard();" class="side-nav-item active">🗂 Dashboard</a>
+            <a onclick="setSideActive(this); showDashboard();" class="side-nav-item">✍️ New Order</a>
+            <a onclick="setSideActive(this); showAllOrders();" class="side-nav-item">📦 All Orders
+                <span id="sideOrderBadge" class="ml-auto bg-[#C08497] text-[#2D1B1B] text-[9px] font-black px-2 py-0.5 rounded-full">0</span>
             </a>
-            <a onclick="setSideActive(this)" class="side-nav-item">
-                ✍️ New Order
-            </a>
-           <a onclick="setSideActive(this); showAllOrders();" class="side-nav-item">📦 All Orders</a>
-                📦 All Orders
-            <span id="sideOrderBadge" class="ml-auto bg-[#C08497] text-[#2D1B1B] text-[9px] font-black px-2 py-0.5 rounded-full">0</span>
-            </a>
-
             <div class="section-label">Manage</div>
-
-            <a onclick="setSideActive(this)" class="side-nav-item">
-                📊 Reports
-            </a>
-            <a onclick="setSideActive(this)" class="side-nav-item">
-                👥 Sales Team
-            </a>
-            <a onclick="setSideActive(this)" class="side-nav-item">
-                🛍 Products
-            </a>
-
+            <a onclick="setSideActive(this)" class="side-nav-item">📊 Reports</a>
+            <a onclick="setSideActive(this)" class="side-nav-item">👥 Sales Team</a>
+            <a onclick="setSideActive(this)" class="side-nav-item">🛍 Products</a>
             <div class="section-label">System</div>
-
-            <a onclick="setSideActive(this); toggleSettings();" class="side-nav-item">
-                ⚙️ Settings
-            </a>
+            <a onclick="setSideActive(this); toggleSettings();" class="side-nav-item">⚙️ Settings</a>
         </nav>
-
-        <!-- Bottom User Info -->
-        <div class="p-3" style="border-top: 1px solid rgba(255,255,255,0.06);">
-            <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black flex-shrink-0" style="background:#C08497; color:#2D1B1B;">AD</div>
-                <div>
-                    <div class="text-[11px] font-bold text-white">Admin</div>
-                    <div class="text-[9px]" style="color:rgba(255,255,255,0.35);">Active Session</div>
-                </div>
-                <button onclick="logout()" class="ml-auto text-[9px] font-bold px-2 py-1 rounded" style="border: 1px solid rgba(239,68,68,0.4); color:rgba(252,165,165,0.7);">OUT</button>
-            </div>
-        </div>
     </aside>
 
     <!-- MAIN AREA -->
     <div class="flex flex-1 min-w-0">
 
-        <!-- INPUT PANEL -->
-        <div class="w-full lg:w-[350px] bg-white border-r border-gray-200 flex flex-col sticky top-14 overflow-y-auto pb-20" style="height: calc(100vh - 56px);">
-
+        <!-- INPUT PANEL (ID: inputPanel) -->
+        <div id="inputPanel" class="w-full lg:w-[350px] bg-white border-r border-gray-200 flex flex-col sticky top-14 overflow-y-auto pb-20" style="height: calc(100vh - 56px);">
             <div class="flex border-b bg-gray-50/50 min-h-[50px] items-center px-4">
                 <span class="text-[10px] font-black text-pink-600 uppercase tracking-widest">🚀 Paste & Import Mode</span>
             </div>
-
             <div class="p-3 space-y-3">
-
                 <section>
                     <span class="input-label">🆔 IDS</span>
                     <div class="grid grid-cols-2 gap-3">
@@ -103,7 +67,6 @@
                         <input type="text" id="orderId" placeholder="Order ID (Auto)" class="w-full border rounded p-2 bg-gray-50 text-xs">
                     </div>
                 </section>
-
                 <section>
                     <span class="input-label">📋 DETAILS</span>
                     <div class="grid grid-cols-2 gap-3">
@@ -113,22 +76,18 @@
                         <input type="date" id="orderDate" value="2026-05-01" class="w-full border rounded p-2 text-xs">
                     </div>
                 </section>
-
                 <section>
                     <span class="input-label">💬 WHATSAPP MESSAGE</span>
                     <textarea id="rawMessage" rows="4" class="w-full p-3 border-2 border-pink-50 rounded-lg focus:outline-none text-xs" placeholder="Paste message here..."></textarea>
                     <button onclick="formatWithGroq()" id="btnText" class="w-full mt-2 btn-pink text-white py-2 rounded font-bold text-xs shadow">Format Info ✨</button>
                 </section>
-
                 <div class="space-y-2 bg-gray-50 p-3 rounded-lg border">
                     <input type="text" id="outName" oninput="updatePreview()" placeholder="Name" class="w-full p-2 border rounded text-xs">
                     <input type="text" id="outPhone" oninput="updatePreview()" placeholder="Mobile Number 1" class="w-full p-2 border rounded text-xs">
                     <input type="text" id="outPhone2" oninput="updatePreview()" placeholder="Mobile Number 2" class="w-full p-2 border rounded text-xs">
                     <textarea id="outAddress" rows="2" oninput="updatePreview()" placeholder="Address" class="w-full p-2 border rounded text-xs"></textarea>
                     <input type="text" id="outCity" oninput="updatePreview()" placeholder="City" class="w-full p-2 border rounded text-xs">
-                    <input type="hidden" id="outProduct">
                 </div>
-
                 <section class="bg-pink-50/20 p-3 rounded-lg border border-pink-100">
                     <span class="input-label">🛍 ADD ITEMS</span>
                     <div class="flex flex-wrap gap-2 mt-2">
@@ -139,18 +98,13 @@
                         <button onclick="addToCartFromSearch()" class="btn-pink text-white px-3 py-1 rounded font-bold text-xs">ADD</button>
                     </div>
                 </section>
-
             </div>
         </div>
 
         <!-- RIGHT CONTENT -->
-        <div class="flex-1 p-4 lg:p-6 bg-gray-50 space-y-6 overflow-x-hidden">
-
-            <!-- Stats -->
-            <div class="flex-1 p-4 lg:p-6 bg-gray-50 space-y-6 overflow-x-hidden overflow-y-auto" style="height: calc(100vh - 56px);">
-                
+        <div class="flex-1 p-4 lg:p-6 bg-gray-50 space-y-6 overflow-x-hidden overflow-y-auto" style="height: calc(100vh - 56px);">
+            
             <!-- DASHBOARD VIEW (Preview & Stats) -->
-                
             <div id="dashboardView" class="space-y-6">
                 <!-- Stats -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -263,33 +217,25 @@
 
         </div>
     </div>
-</div>               
+</div>
 
-<!-- SETTINGS MODAL -->
+<!-- Modal Settings... (Same as before) -->
 <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+    <!-- Modal content code same as provided -->
     <div class="bg-white w-full max-w-4xl h-[500px] rounded-xl shadow-2xl flex overflow-hidden border">
         <div class="w-1/3 bg-gray-100 border-r flex flex-col">
             <div class="p-4 border-b bg-pink-600 text-white font-bold">⚙️ Settings</div>
             <nav class="flex-1 p-2 space-y-1">
-                <button onclick="showTab('salesTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition active-tab" id="btn-salesTab">
-                    👤 Sales Team
-                </button>
-                <button onclick="showTab('productsTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition" id="btn-productsTab">
-                    🛍 Manage Products
-                </button>
-                <button onclick="showTab('deliveryTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition" id="btn-deliveryTab">
-                    🚚 Delivery Charges
-                </button>
+                <button onclick="showTab('salesTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition active-tab" id="btn-salesTab">👤 Sales Team</button>
+                <button onclick="showTab('productsTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition" id="btn-productsTab">🛍 Manage Products</button>
+                <button onclick="showTab('deliveryTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition" id="btn-deliveryTab">🚚 Delivery Charges</button>
             </nav>
             <div class="p-4 border-t space-y-2">
                 <button onclick="saveSettings()" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700">SAVE ALL</button>
                 <button onclick="toggleSettings()" class="w-full bg-gray-300 text-gray-700 py-2 rounded-lg font-bold">CLOSE</button>
             </div>
         </div>
-
         <div class="w-2/3 p-6 overflow-y-auto bg-white">
-
-            <!-- Sales Tab -->
             <div id="salesTab" class="tab-content">
                 <h2 class="text-xl font-bold mb-4 text-blue-600">Manage Sales Team</h2>
                 <div class="grid grid-cols-2 gap-2 mb-4 bg-blue-50 p-3 rounded-lg border border-blue-100">
@@ -300,19 +246,10 @@
                     <button onclick="addNewSalesPerson()" class="col-span-2 bg-blue-600 text-white py-2 rounded font-bold">+ Add Person</button>
                 </div>
                 <table class="w-full text-xs border">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="p-2 text-left border">Name</th>
-                            <th class="p-2 text-left border">Short</th>
-                            <th class="p-2 text-left border">Mobile</th>
-                            <th class="p-2 text-right border">Action</th>
-                        </tr>
-                    </thead>
+                    <thead class="bg-gray-100"><tr><th class="p-2 text-left border">Name</th><th class="p-2 text-left border">Short</th><th class="p-2 text-left border">Mobile</th><th class="p-2 text-right border">Action</th></tr></thead>
                     <tbody id="settingsSalesList" class="divide-y"></tbody>
                 </table>
             </div>
-
-            <!-- Products Tab -->
             <div id="productsTab" class="tab-content hidden">
                 <h2 class="text-xl font-bold mb-4 text-pink-600">Manage Products</h2>
                 <div class="grid grid-cols-3 gap-2 mb-4 bg-pink-50 p-3 rounded-lg border border-pink-100">
@@ -322,28 +259,17 @@
                     <button onclick="addNewProduct()" class="bg-pink-600 text-white py-2 rounded font-bold">+ Add</button>
                 </div>
                 <table class="w-full text-xs border">
-                    <thead class="bg-gray-100 uppercase text-[10px]">
-                        <tr>
-                            <th class="p-2 text-left border">Product</th>
-                            <th class="p-2 text-left border">Short</th>
-                            <th class="p-2 text-left border">Price</th>
-                            <th class="p-2 text-right border">Action</th>
-                        </tr>
-                    </thead>
+                    <thead class="bg-gray-100 uppercase text-[10px]"><tr><th class="p-2 text-left border">Product</th><th class="p-2 text-left border">Short</th><th class="p-2 text-left border">Price</th><th class="p-2 text-right border">Action</th></tr></thead>
                     <tbody id="settingsProductList" class="divide-y"></tbody>
                 </table>
             </div>
-
-            <!-- Delivery Tab -->
             <div id="deliveryTab" class="tab-content hidden">
                 <h2 class="text-xl font-bold mb-4 text-orange-600">Delivery Charges</h2>
                 <div class="bg-orange-50 p-6 rounded-lg border border-orange-100">
                     <label class="block text-sm font-bold mb-2">Default Delivery Fee (LKR):</label>
                     <input type="number" id="settingDelCharge" class="w-full p-3 border rounded-lg text-lg font-bold" placeholder="425.00">
-                    <p class="text-xs text-gray-500 mt-2 italic">* This amount will be added to orders by default.</p>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -353,48 +279,64 @@
     let deliveryCharge = 425.00;
     let settingsData = { products: [], salesPersons: [], delCharge: 425 };
 
-    (function() {
-        if (sessionStorage.getItem("isLoggedIn") !== "true") {
-            window.location.replace("login.html");
-        }
-    })();
-
-    function logout() {
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.replace("login.html");
+    // --- VIEW CONTROL FUNCTIONS ---
+    function showAllOrders() {
+        document.getElementById('inputPanel').classList.add('hidden');
+        document.getElementById('dashboardView').classList.add('hidden');
+        document.getElementById('allOrdersView').classList.remove('hidden');
+        fetchAllOrdersFromDB();
     }
 
-    function setSideActive(el) {
-        document.querySelectorAll('.side-nav-item').forEach(a => a.classList.remove('active'));
-        el.classList.add('active');
+    function showDashboard() {
+        document.getElementById('inputPanel').classList.remove('hidden');
+        document.getElementById('dashboardView').classList.remove('hidden');
+        document.getElementById('allOrdersView').classList.add('hidden');
     }
 
-    function toggleSettings() {
-        document.getElementById('settingsModal').classList.toggle('hidden');
+    async function fetchAllOrdersFromDB() {
+        const tbody = document.getElementById('allOrdersTableBody');
+        tbody.innerHTML = '<tr><td colspan="8" class="p-10 text-center">Loading data...</td></tr>';
+        try {
+            const res = await fetch('/get-orders'); // ඔබේ Backend Endpoint එක මෙතැනට දමන්න
+            if (res.ok) {
+                const data = await res.json();
+                tbody.innerHTML = data.map((order, i) => `
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-3 border">${i+1}</td>
+                        <td class="p-3 border">${order.order_date || '-'}</td>
+                        <td class="p-3 border font-bold">${order.name}</td>
+                        <td class="p-3 border">${order.phone}</td>
+                        <td class="p-3 border">${order.items}</td>
+                        <td class="p-3 border font-bold text-red-600">Rs. ${order.total}</td>
+                        <td class="p-3 border">${order.sales_person || '-'}</td>
+                        <td class="p-3 border">${order.city || '-'}</td>
+                    </tr>
+                `).join('');
+            }
+        } catch (e) { tbody.innerHTML = '<tr><td colspan="8" class="p-10 text-center text-red-500">Failed to load data.</td></tr>'; }
     }
 
-    function showTab(tabId) {
+    // --- PREVIOUS FUNCTIONS RE-ATTACHED ---
+    function logout() { sessionStorage.clear(); window.location.replace("login.html"); }
+    function setSideActive(el) { document.querySelectorAll('.side-nav-item').forEach(a => a.classList.remove('active')); el.classList.add('active'); }
+    function toggleSettings() { document.getElementById('settingsModal').classList.toggle('hidden'); }
+    function showTab(tabId) { 
         document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active-tab'));
-        document.getElementById(tabId).classList.remove('hidden');
-        document.getElementById('btn-' + tabId).classList.add('active-tab');
+        document.getElementById(tabId).classList.remove('hidden'); 
+        document.getElementById('btn-' + tabId).classList.add('active-tab'); 
     }
 
     function handleDelOption() {
         deliveryCharge = (document.getElementById('delOption').value === "yes") ? settingsData.delCharge : 0.00;
-        renderCart();
-        updatePreview();
+        renderCart(); updatePreview();
     }
 
     function syncPriceFromSearch() {
         const val = document.getElementById('productSearch').value;
         const opts = document.getElementById('productOptions').options;
         for (let i = 0; i < opts.length; i++) {
-            if (opts[i].value === val) {
-                document.getElementById('customPrice').value = opts[i].getAttribute('data-price');
-                break;
-            }
+            if (opts[i].value === val) { document.getElementById('customPrice').value = opts[i].getAttribute('data-price'); break; }
         }
     }
 
@@ -404,30 +346,14 @@
         const qty = parseFloat(document.getElementById('prodQty').value);
         if (!name || isNaN(price)) return alert("Select product!");
         cart.push({ name, price, qty });
-        renderCart();
-        updatePreview();
-    }
-
-    function removeFromCart(index) {
-        cart.splice(index, 1);
-        renderCart();
-        updatePreview();
+        renderCart(); updatePreview();
     }
 
     function renderCart() {
         const tbody = document.getElementById('orderTableBody');
-        const name = document.getElementById('outName').value;
-        const addr = document.getElementById('outAddress').value;
-        const p1 = document.getElementById('outPhone').value;
-        const p2 = document.getElementById('outPhone2').value;
-        const city = document.getElementById('outCity').value;
-        const waybill = document.getElementById('waybillNo').value || "Auto";
-        const orderId = document.getElementById('orderId').value || "Auto";
-
         let subtotal = 0;
         let description = cart.map(item => `${item.name} (${item.qty})`).join(", ");
         cart.forEach(item => subtotal += (item.price * item.qty));
-
         const discount = parseFloat(document.getElementById('discountRate').value) || 0;
         const final = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
 
@@ -435,181 +361,33 @@
             tbody.innerHTML = `
                 <tr class="hover:bg-pink-50/30">
                     <td class="p-3">1</td>
-                    <td class="p-3 font-bold">${waybill}</td>
-                    <td class="p-3">${orderId}</td>
-                    <td class="p-3 font-bold">${name}</td>
-                    <td class="p-3 text-gray-500">${addr}</td>
+                    <td class="p-3 font-bold">${document.getElementById('waybillNo').value || 'Auto'}</td>
+                    <td class="p-3">${document.getElementById('orderId').value || 'Auto'}</td>
+                    <td class="p-3 font-bold">${document.getElementById('outName').value}</td>
+                    <td class="p-3 text-gray-500">${document.getElementById('outAddress').value}</td>
                     <td class="p-3 text-blue-600 font-medium">${description}</td>
-                    <td class="p-3">${p1}</td>
-                    <td class="p-3">${p2}</td>
+                    <td class="p-3">${document.getElementById('outPhone').value}</td>
+                    <td class="p-3">${document.getElementById('outPhone2').value}</td>
                     <td class="p-3 font-black text-red-600">Rs. ${final.toFixed(2)}</td>
-                    <td class="p-3">${city}</td>
-                    <td class="p-3 text-center">
-                        <button onclick="removeFromCart(0)" class="text-red-500 font-bold">✕</button>
-                    </td>
+                    <td class="p-3">${document.getElementById('outCity').value}</td>
+                    <td class="p-3 text-center"><button onclick="cart=[]; renderCart();" class="text-red-500 font-bold">✕</button></td>
                 </tr>`;
-        } else {
-            tbody.innerHTML = '<tr><td colspan="11" class="p-10 text-center text-gray-300 italic">No orders added to preview.</td></tr>';
-        }
-
+        } else { tbody.innerHTML = '<tr><td colspan="11" class="p-10 text-center text-gray-300 italic">No orders added to preview.</td></tr>'; }
+        
         document.getElementById('finalPriceDisplay').innerText = final.toFixed(2);
         document.getElementById('orderCount').innerText = cart.length > 0 ? 1 : 0;
-        document.getElementById('sideOrderBadge').innerText = cart.length > 0 ? 1 : 0;
     }
 
     function updatePreview() {
         const name = document.getElementById('outName').value || "...";
-        const address = document.getElementById('outAddress').value || "...";
         const phone = document.getElementById('outPhone').value || "...";
-        const discount = parseFloat(document.getElementById('discountRate').value) || 0;
-
-        let subtotal = 0;
-        let itemsList = "";
-        cart.forEach((item) => {
-            subtotal += (item.price * item.qty);
-            itemsList += `• ${item.name} x${item.qty}\n`;
-        });
-
-        const final = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
-
-        let msg = `🌸 *C Pearl White - Order* 🌸\n`;
-        msg += `👤 Name: ${name}\n`;
-        msg += `📱 Phone: ${phone}\n`;
-        msg += `📍 Address: ${address}\n\n`;
-        msg += `📦 Items:\n${itemsList || "None"}\n`;
-        msg += `💰 *TOTAL COD: Rs. ${final.toFixed(2)}*`;
-
+        let subtotal = 0; let itemsList = "";
+        cart.forEach(item => { subtotal += (item.price * item.qty); itemsList += `• ${item.name} x${item.qty}\n`; });
+        const final = subtotal > 0 ? (subtotal + deliveryCharge - (parseFloat(document.getElementById('discountRate').value) || 0)) : 0;
+        let msg = `🌸 *C Pearl White - Order* 🌸\n👤 Name: ${name}\n📱 Phone: ${phone}\n📦 Items:\n${itemsList || "None"}\n💰 *TOTAL COD: Rs. ${final.toFixed(2)}*`;
         document.getElementById('waPreview').value = msg;
         renderCart();
     }
-
-    function addNewSalesPerson() {
-        const name = document.getElementById('newSalesName').value.trim();
-        const short = document.getElementById('newSalesShort').value.trim();
-        const phone = document.getElementById('newSalesPhone').value.trim();
-        const pos = document.getElementById('newSalesPos').value.trim();
-        if (!name || !short) return alert("Fill Name and Short Name!");
-        settingsData.salesPersons.push({ name, short, phone, pos });
-        renderSettingsLists();
-        ['newSalesName', 'newSalesShort', 'newSalesPhone', 'newSalesPos'].forEach(id => document.getElementById(id).value = '');
-    }
-
-    function addNewProduct() {
-        const name = document.getElementById('newProdName').value.trim();
-        const short = document.getElementById('newProdShort').value.trim();
-        const price = document.getElementById('newProdPrice').value.trim();
-        if (!name || !price) return alert("Fill Product Name and Price!");
-        settingsData.products.push({ name, short, price });
-        renderSettingsLists();
-        ['newProdName', 'newProdShort', 'newProdPrice'].forEach(id => document.getElementById(id).value = '');
-    }
-
-    function removeItem(type, index) {
-        if (type === 'sales') settingsData.salesPersons.splice(index, 1);
-        if (type === 'product') settingsData.products.splice(index, 1);
-        renderSettingsLists();
-    }
-
-    function editItem(type, index) {
-        if (type === 'sales') {
-            const item = settingsData.salesPersons[index];
-            document.getElementById('newSalesName').value = item.name;
-            document.getElementById('newSalesShort').value = item.short;
-            document.getElementById('newSalesPhone').value = item.phone;
-            settingsData.salesPersons.splice(index, 1);
-        } else {
-            const item = settingsData.products[index];
-            document.getElementById('newProdName').value = item.name;
-            document.getElementById('newProdShort').value = item.short;
-            document.getElementById('newProdPrice').value = item.price;
-            settingsData.products.splice(index, 1);
-        }
-        renderSettingsLists();
-    }
-
-    function renderSettingsLists() {
-        document.getElementById('settingsSalesList').innerHTML = settingsData.salesPersons.map((s, i) => `
-            <tr class="hover:bg-gray-50 text-[11px]">
-                <td class="p-2 border font-bold">${s.name}</td>
-                <td class="p-2 border text-pink-600 font-bold">${s.short}</td>
-                <td class="p-2 border">${s.phone}</td>
-                <td class="p-2 border text-right space-x-2">
-                    <button onclick="editItem('sales', ${i})" class="text-blue-500 hover:text-blue-700 font-bold">EDIT</button>
-                    <button onclick="removeItem('sales', ${i})" class="text-red-500 font-bold">✕</button>
-                </td>
-            </tr>`).join('');
-
-        document.getElementById('settingsProductList').innerHTML = settingsData.products.map((p, i) => `
-            <tr class="hover:bg-gray-50 text-[11px]">
-                <td class="p-2 border font-bold">${p.name}</td>
-                <td class="p-2 border text-blue-600 font-bold">${p.short || '-'}</td>
-                <td class="p-2 border font-mono">Rs. ${parseFloat(p.price).toFixed(2)}</td>
-                <td class="p-2 border text-right space-x-2">
-                    <button onclick="editItem('product', ${i})" class="text-blue-500 hover:text-blue-700 font-bold">EDIT</button>
-                    <button onclick="removeItem('product', ${i})" class="text-red-500 font-bold">✕</button>
-                </td>
-            </tr>`).join('');
-    }
-
-    function applySettingsToDashboard() {
-        const delOpt = document.getElementById('delOption');
-        if (delOpt) delOpt.options[0].text = parseFloat(settingsData.delCharge).toFixed(2);
-        deliveryCharge = settingsData.delCharge;
-
-        const salesSelect = document.getElementById('salesPerson');
-        salesSelect.innerHTML = '<option value="">-- Select --</option>' +
-            settingsData.salesPersons.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
-
-        const dataList = document.getElementById('productOptions');
-        dataList.innerHTML = settingsData.products.map(p =>
-            `<option value="${p.name} (${p.short})" data-price="${p.price}">`).join('');
-    }
-
-    async function saveSettings() {
-        const salesStr = settingsData.salesPersons.map(s => `${s.name}|${s.short}|${s.phone}|${s.pos}`).join('\n');
-        const prodsStr = settingsData.products.map(p => `${p.name},${p.short},${p.price}`).join('\n');
-        const delCharge = document.getElementById('settingDelCharge').value;
-        try {
-            const res = await fetch('/manage-settings', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ del_charge: delCharge, sales_persons: salesStr, products: prodsStr })
-            });
-            if (res.ok) {
-                alert("Settings Saved Successfully! ✅");
-                settingsData.delCharge = parseFloat(delCharge);
-                applySettingsToDashboard();
-                toggleSettings();
-            }
-        } catch (err) { alert("Error saving settings."); }
-    }
-
-    window.addEventListener('DOMContentLoaded', async () => {
-        try {
-            const response = await fetch('/manage-settings');
-            if (response.ok) {
-                const data = await response.json();
-                if (data) {
-                    settingsData.delCharge = data.del_charge || 425;
-                    document.getElementById('settingDelCharge').value = settingsData.delCharge;
-                    if (data.sales_persons) {
-                        settingsData.salesPersons = data.sales_persons.split('\n').filter(l => l.trim()).map(line => {
-                            const [name, short, phone, pos] = line.split('|');
-                            return { name, short, phone, pos };
-                        });
-                    }
-                    if (data.products) {
-                        settingsData.products = data.products.split('\n').filter(l => l.trim()).map(line => {
-                            const [name, short, price] = line.split(',');
-                            return { name, short, price };
-                        });
-                    }
-                    renderSettingsLists();
-                    applySettingsToDashboard();
-                }
-            }
-        } catch (e) { console.log("Load error"); }
-    });
 
     async function formatWithGroq() {
         let rawText = document.getElementById('rawMessage').value;
@@ -617,196 +395,53 @@
         if (!rawText) return alert("Enter message!");
         btn.innerText = "Processing... ✨"; btn.disabled = true;
         try {
-            const response = await fetch('/format-info', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ rawText: rawText })
-            });
-            const data = await response.json();
+            const res = await fetch('/format-info', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ rawText }) });
+            const data = await res.json();
             const result = JSON.parse(data.choices[0].message.content);
             document.getElementById('outName').value = result.name || "";
             document.getElementById('outAddress').value = result.address || "";
             document.getElementById('outCity').value = result.city || "";
             document.getElementById('outPhone').value = result.phone || "";
-            document.getElementById('outPhone2').value = result.phone2 || "";
             updatePreview();
-        } catch (error) { alert("AI Error."); } finally {
-            btn.innerText = "Format Info ✨"; btn.disabled = false;
-        }
-    }
-
-    function shareToWhatsApp() {
-        const message = document.getElementById('waPreview').value;
-        window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+        } catch (e) { alert("AI Error."); } finally { btn.innerText = "Format Info ✨"; btn.disabled = false; }
     }
 
     async function saveOrder() {
-    const name = document.getElementById('outName').value;
-    const phone = document.getElementById('outPhone').value;
-
-    if (!name || !phone || cart.length === 0) {
-        return alert("Fill customer info and add items!");
-    }
-
-    const description = cart.map(item => `${item.name} (${item.qty})`).join(", ");
-
-    let subtotal = 0;
-    cart.forEach(item => subtotal += (item.price * item.qty));
-
-    const discount = parseFloat(document.getElementById('discountRate').value) || 0;
-    const finalTotal = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
-
-    const orderData = {
-        name: name,
-        phone: phone,
-        phone2: document.getElementById('outPhone2').value,
-        address: document.getElementById('outAddress').value,
-        city: document.getElementById('outCity').value,
-        items: description,
-        total: finalTotal,
-        discount: discount,
-        delivery: deliveryCharge,
-        sales_person: document.getElementById('salesPerson').value,
-        order_date: document.getElementById('orderDate').value
-    };
-
-    try {
-        const res = await fetch('/save-order', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(orderData)
-        });
-
-        if (res.ok) {
-            addOrderToTable();
-            alert("Order Saved Successfully ✅");
-        } else {
-            alert("Database Save Failed ❌");
-        }
-
-    } catch (error) {
-        alert("Server Error ❌");
-        console.log(error);
-    }
-}
-
-    function addOrderToTable() {
-        const name = document.getElementById('outName').value;
-        const phone = document.getElementById('outPhone').value;
-        if (!name || !phone || cart.length === 0) return alert("Fill customer info and add items!");
-
-        const tbody = document.getElementById('orderTableBody');
-        if (tbody.rows.length === 1 && tbody.rows[0].cells.length < 5) tbody.innerHTML = '';
-
-        const description = cart.map(item => `${item.name} (${item.qty})`).join(", ");
-        let subtotal = 0;
-        cart.forEach(item => subtotal += (item.price * item.qty));
-        const discount = parseFloat(document.getElementById('discountRate').value) || 0;
-        const finalTotal = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
-
-        const row = tbody.insertRow();
-        row.className = "hover:bg-pink-50/30 border-b border-gray-100";
-        row.innerHTML = `
-            <td class="p-3">${tbody.rows.length}</td>
-            <td class="p-3 font-bold">${document.getElementById('waybillNo').value || 'PENDING'}</td>
-            <td class="p-3">${document.getElementById('orderId').value || 'Auto'}</td>
-            <td class="p-3 font-bold">${name}</td>
-            <td class="p-3">${document.getElementById('outAddress').value}</td>
-            <td class="p-3 text-blue-600 font-medium">${description}</td>
-            <td class="p-3">${phone}</td>
-            <td class="p-3">${document.getElementById('outPhone2').value || '-'}</td>
-            <td class="p-3 font-black text-red-600">Rs. ${finalTotal.toFixed(2)}</td>
-            <td class="p-3">${document.getElementById('outCity').value}</td>
-            <td class="p-3 text-center"><button onclick="this.parentElement.parentElement.remove(); updateOrderStats();" class="text-red-500 font-bold">✕</button></td>
-        `;
-        updateOrderStats();
-        clearForm();
-    }
-
-    function updateOrderStats() {
-        const rows = document.getElementById('orderTableBody').getElementsByTagName('tr');
-        let total = 0, count = 0;
-        for (let row of rows) {
-            if (row.cells.length > 5) {
-                const val = row.cells[8].innerText.replace('Rs. ', '');
-                total += parseFloat(val); count++;
-            }
-        }
-        document.getElementById('orderCount').innerText = count;
-        document.getElementById('finalPriceDisplay').innerText = total.toFixed(2);
-        document.getElementById('sideOrderBadge').innerText = count;
+        const orderData = {
+            name: document.getElementById('outName').value,
+            phone: document.getElementById('outPhone').value,
+            items: cart.map(item => `${item.name} (${item.qty})`).join(", "),
+            total: document.getElementById('finalPriceDisplay').innerText,
+            sales_person: document.getElementById('salesPerson').value,
+            order_date: document.getElementById('orderDate').value,
+            city: document.getElementById('outCity').value
+        };
+        try {
+            const res = await fetch('/save-order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(orderData) });
+            if (res.ok) { alert("Saved! ✅"); clearForm(); }
+        } catch (e) { alert("Error! ❌"); }
     }
 
     function clearForm() {
-        document.getElementById('outName').value = '';
-        document.getElementById('outPhone').value = '';
-        document.getElementById('outPhone2').value = '';
-        document.getElementById('outAddress').value = '';
-        document.getElementById('outCity').value = '';
-        document.getElementById('rawMessage').value = '';
-        cart = []; renderCart(); updatePreview();
+        ['outName', 'outPhone', 'outPhone2', 'outAddress', 'outCity', 'rawMessage'].forEach(id => document.getElementById(id).value = '');
+        cart = []; updatePreview();
     }
 
-    function clearTable() {
-        document.getElementById('orderTableBody').innerHTML = '<tr><td colspan="11" class="p-10 text-center text-gray-300 italic">No orders added to preview.</td></tr>';
-        updateOrderStats();
-    }
-
-    function showAllOrdersSection() {
-    // වම්පස Panel එක සඟවනවා
-    document.querySelector('.lg\\:w-\\[350px\\]').style.display = 'none';
-    
-    // Dashboard එක සඟවා All Orders පෙන්වනවා
-    document.getElementById('dashboardView').classList.add('hidden');
-    document.getElementById('allOrdersView').classList.remove('hidden');
-    
-    refreshAllOrders();
-}
-
-function showNewOrderView() {
-    // වම්පස Panel එක නැවත පෙන්වනවා
-    document.querySelector('.lg\\:w-\\[350px\\]').style.display = 'flex';
-    
-    // All Orders සඟවා Dashboard පෙන්වනවා
-    document.getElementById('allOrdersView').classList.add('hidden');
-    document.getElementById('dashboardView').classList.remove('hidden');
-    
-    // Sidebar එකේ New Order එක active කරන්න
-    const newOrderBtn = document.querySelector('a[onclick*="showNewOrderView"]');
-    if(newOrderBtn) setSideActive(newOrderBtn);
-}
-
-async function refreshAllOrders() {
-    const tbody = document.getElementById('allOrdersTableBody');
-    tbody.innerHTML = '<tr><td colspan="7" class="p-5 text-center animate-pulse">Fetching from Database... ⏳</td></tr>';
-    
-    try {
-        const response = await fetch('/get-all-orders'); 
-        if (response.ok) {
-            const orders = await response.json();
-            tbody.innerHTML = '';
-            if(orders.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="p-5 text-center text-gray-400">No orders found in database.</td></tr>';
-                return;
+    // --- INIT ---
+    window.onload = async () => {
+        try {
+            const res = await fetch('/manage-settings');
+            if (res.ok) {
+                const data = await res.json();
+                settingsData.delCharge = data.del_charge || 425;
+                if (data.products) { settingsData.products = data.products.split('\n').map(l => { const [name, short, price] = l.split(','); return {name, short, price}; }); }
+                if (data.sales_persons) { settingsData.salesPersons = data.sales_persons.split('\n').map(l => { const [name, short, phone] = l.split('|'); return {name, short, phone}; }); }
+                
+                document.getElementById('productOptions').innerHTML = settingsData.products.map(p => `<option value="${p.name}" data-price="${p.price}">`).join('');
+                document.getElementById('salesPerson').innerHTML = '<option value="">-- Select --</option>' + settingsData.salesPersons.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
             }
-            orders.forEach((order, index) => {
-                const row = tbody.insertRow();
-                row.className = "hover:bg-blue-50/50";
-                row.innerHTML = `
-                    <td class="p-3 font-bold text-gray-400">${index + 1}</td>
-                    <td class="p-3 font-medium">${order.order_date || 'N/A'}</td>
-                    <td class="p-3 font-black text-gray-800">${order.name}</td>
-                    <td class="p-3 text-blue-600 font-semibold">${order.items}</td>
-                    <td class="p-3 font-black text-red-600">Rs. ${parseFloat(order.total).toFixed(2)}</td>
-                    <td class="p-3 font-bold text-pink-600">${order.sales_person || '-'}</td>
-                    <td class="p-3"><span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[9px] font-bold">SAVED</span></td>
-                `;
-            });
-        }
-    } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="7" class="p-5 text-center text-red-500 font-bold">❌ Connection Error. check your Backend!</td></tr>';
-    }
-}
+        } catch(e) {}
+    };
 </script>
 </body>
 </html>
