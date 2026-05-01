@@ -45,9 +45,9 @@
             <a onclick="setSideActive(this)" class="side-nav-item">
                 ✍️ New Order
             </a>
-            <a onclick="setSideActive(this)" class="side-nav-item">
+           <a onclick="setSideActive(this); showAllOrdersSection();" class="side-nav-item">
                 📦 All Orders
-                <span id="sideOrderBadge" class="ml-auto bg-[#C08497] text-[#2D1B1B] text-[9px] font-black px-2 py-0.5 rounded-full">0</span>
+            <span id="sideOrderBadge" class="ml-auto bg-[#C08497] text-[#2D1B1B] text-[9px] font-black px-2 py-0.5 rounded-full">0</span>
             </a>
 
             <div class="section-label">Manage</div>
@@ -192,6 +192,32 @@
                     </table>
                 </div>
             </div>
+
+           
+        <div id="allOrdersSection" class="hidden bg-white rounded-xl shadow-sm border border-blue-100 overflow-hidden mt-6">
+            <div class="bg-blue-900 p-3 flex justify-between items-center">
+            <h4 class="text-white text-xs font-bold uppercase tracking-widest">📜 All Database Orders</h4>
+        <button onclick="refreshAllOrders()" class="bg-blue-500/20 text-blue-100 text-[9px] px-3 py-1 rounded border border-blue-500/40 font-bold">REFRESH LIST</button>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-[10px] text-left border-collapse min-w-[1000px]">
+                <thead class="bg-blue-950 text-blue-200 uppercase">
+                <tr>
+                    <th class="p-3">#</th>
+                    <th class="p-3">Date</th>
+                    <th class="p-3">Customer</th>
+                    <th class="p-3">Items</th>
+                    <th class="p-3">COD (Rs.)</th>
+                    <th class="p-3">Sales Person</th>
+                    <th class="p-3 text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody id="allOrdersTableBody" class="divide-y divide-gray-100">
+                <!-- දත්ත මෙතැනට වැටේ -->
+            </tbody>
+        </table>
+    </div>
+</div>
 
             <!-- WhatsApp Preview & Actions -->
             <div class="bg-white p-4 rounded-xl shadow-sm border border-orange-100 grid grid-cols-1 md:grid-cols-2 gap-4">
