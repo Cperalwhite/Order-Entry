@@ -602,7 +602,57 @@
         window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
     }
 
-    function saveOrder() {
+    async function saveOrder() {
+    const name = document.getElementById('outName').value;
+    const phone = document.getElementById('outPhone').value;
+
+    if (!name || !phone || cart.length === 0) {
+        return alert("Fill customer info and add items!");
+    }
+
+    const description = cart.map(item => `${item.name} (${item.qty})`).join(", ");
+
+    let subtotal = 0;
+    cart.forEach(item => subtotal += (item.price * item.qty));
+
+    const discount = parseFloat(document.getElementById('discountRate').value) || 0;
+    const finalTotal = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
+
+    const orderData = {
+        name: name,
+        phone: phone,
+        phone2: document.getElementById('outPhone2').value,
+        address: document.getElementById('outAddress').value,
+        city: document.getElementById('outCity').value,
+        items: description,
+        total: finalTotal,
+        discount: discount,
+        delivery: deliveryCharge,
+        sales_person: document.getElementById('salesPerson').value,
+        order_date: document.getElementById('orderDate').value
+    };
+
+    try {
+        const res = await fetch('/save-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+        });
+
+        if (res.ok) {
+            addOrderToTable();
+            alert("Order Saved Successfully ✅");
+        } else {
+            alert("Database Save Failed ❌");
+        }
+
+    } catch (error) {
+        alert("Server Error ❌");
+        console.log(error);
+    }
+}
+
+    function addOrderToTable() {
         const name = document.getElementById('outName').value;
         const phone = document.getElementById('outPhone').value;
         if (!name || !phone || cart.length === 0) return alert("Fill customer info and add items!");
