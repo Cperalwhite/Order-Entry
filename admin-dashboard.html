@@ -1,401 +1,613 @@
 <!DOCTYPE html>
 <html lang="si">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' blob:; script-src-elem * 'unsafe-inline' 'unsafe-eval' blob:; connect-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline';">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C Pearl White - Admin Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .header-bg { background-color: #2D1B1B; }
-        .sidebar-bg { background-color: #1a1010; }
-        .nav-link { color: #fdf8f8; transition: all 0.3s; border-radius: 8px; margin-bottom: 5px; }
-        .nav-link:hover, .nav-link.active { background-color: #C08497; color: white; }
-        .tab-active { border-bottom: 3px solid #C08497; color: #C08497; font-weight: bold; }
-        .input-label { font-size: 11px; font-weight: bold; color: #C08497; text-transform: uppercase; margin-bottom: 4px; display: block; }
-        .stat-card { border-left-width: 4px; }
-        .btn-pink { background-color: #C08497; }
-        .btn-pink:hover { background-color: #a66d80; }
-        table th { white-space: nowrap; }
-        .active-tab { background-color: #fce7f3 !important; border-left: 4px solid #db2777; color: #db2777; }
-    </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' blob:; script-src-elem * 'unsafe-inline' 'unsafe-eval' blob:; connect-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline';">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C Pearl White - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .header-bg { background-color: #2D1B1B; }
+        .tab-active { border-bottom: 3px solid #C08497; color: #C08497; font-weight: bold; }
+        .input-label { font-size: 11px; font-weight: bold; color: #C08497; text-transform: uppercase; margin-bottom: 4px; display: block; }
+        .stat-card { border-left-width: 4px; }
+        .btn-pink { background-color: #C08497; }
+        .btn-pink:hover { background-color: #a66d80; }
+        table th { white-space: nowrap; }
+        /* Settings Tab Styles */
+        .active-tab { background-color: #fce7f3 !important; border-left: 4px solid #db2777; color: #db2777; }
+    </style>
 </head>
 <body class="bg-[#FDF8F8] font-sans">
 
-<div class="flex flex-col lg:flex-row min-h-screen">
-    <!-- LEFT SIDEBAR NAVIGATION (From Source 1) -->
-    <aside class="w-full lg:w-72 sidebar-bg text-white flex flex-col sticky top-0 h-screen z-50">
-        <div class="p-6 border-b border-white/10 header-bg">
-            <h1 class="text-2xl italic font-serif">C Pearl <span class="font-normal">White</span></h1>
-            <p class="text-[10px] text-pink-300 tracking-widest uppercase mt-1">Admin Panel</p>
-        </div>
-        
-        <nav class="flex-1 p-4 overflow-y-auto">
-            <div class="mb-6">
-                <span class="text-gray-500 text-[10px] uppercase font-bold px-2">Main Menu</span>
-                <a href="#" class="flex items-center gap-3 p-3 nav-link active mt-2">
-                    <span>📦</span> Add Order
-                </a>
-                <a href="#" class="flex items-center gap-3 p-3 nav-link">
-                    <span>📊</span> View Analytics
-                </a>
-                <a href="#" class="flex items-center gap-3 p-3 nav-link">
-                    <span>👥</span> Customers
-                </a>
-            </div>
+<header class="header-bg text-white p-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+    <h1 class="text-xl italic font-serif ml-4">C Pearl <span class="font-normal">White</span></h1>
+    <div class="flex gap-4 items-center text-xs mr-4">
+        <span class="bg-black/20 px-3 py-1 rounded">⌛ Active Session</span>
+		<button onclick="toggleSettings()" class="border border-red-400 text-red-300 px-3 py-1 rounded hover:bg-red-500/10 uppercase font-bold tracking-tighter">⚙️ Settings</button>
+        <button onclick="logout()" class="border border-red-400 text-red-300 px-3 py-1 rounded hover:bg-red-500/10 uppercase font-bold tracking-tighter">Logout</button>
+    </div>
+</header>
 
-            <div class="mb-6">
-                <span class="text-gray-500 text-[10px] uppercase font-bold px-2">System</span>
-                <button onclick="toggleSettings()" class="w-full flex items-center gap-3 p-3 nav-link">
-                    <span>⚙️</span> Settings
-                </button>
-                <button onclick="logout()" class="w-full flex items-center gap-3 p-3 nav-link text-red-400">
-                    <span>🚪</span> Logout
-                </button>
-            </div>
-        </nav>
+    <div class="flex flex-col lg:flex-row min-h-screen">
+        
+        <div class="w-full lg:w-[350px] bg-white border-r border-gray-200 flex flex-col h-screen sticky top-14 overflow-y-auto pb-20">
+            <div class="flex border-b bg-gray-50/50 min-h-[50px] items-center px-4">
+				<span class="text-[10px] font-black text-pink-600 uppercase tracking-widest">🚀 Paste & Import Mode</span>
+    		</div>
+			
+				<section>
+            		<span class="input-label">🆔 IDS</span>
+            		<div class="grid grid-cols-2 gap-3">
+						<input type="text" id="waybillNo" placeholder="Waybill (Auto)" class="w-full border rounded p-2 bg-gray-50 text-xs">
+                		<input type="text" id="orderId" placeholder="Order ID (Auto)" class="w-full border rounded p-2 bg-gray-50 text-xs">
+           			</div>
+					</section>
 
-        <div class="p-4 bg-black/20 text-[10px] text-center text-gray-400">
-            © 2026 C Pearl White Management
-        </div>
-    </aside>
+					<section>
+            			<span class="input-label">📋 DETAILS</span>
+            			<div class="grid grid-cols-2 gap-3">
+                			<select id="salesPerson" class="w-full border rounded p-2 text-xs font-semibold">
+                    			<option value="">-- Select --</option>
+                			</select>
+                			<input type="date" id="orderDate" value="2026-04-26" class="w-full border rounded p-2 text-xs">
+            		</div>
+        		</section>
+			
+                <section>
+                    <span class="input-label">📋 DETAILS</span>
+                    <div class="grid grid-cols-2 gap-3">
+                        <select id="salesPerson" class="w-full border rounded p-2 text-xs font-semibold">
+                            <option value="">-- Select --</option>
+                        </select>
+                        <input type="date" id="orderDate" value="2026-04-25" class="w-full border rounded p-2 text-xs">
+                    </div>
+                </section>
 
-    <!-- MAIN CONTENT AREA -->
-    <main class="flex-1 flex flex-col min-h-screen overflow-x-hidden">
-        
-        <!-- TOP HEADER -->
-        <header class="bg-white border-b p-4 flex justify-between items-center sticky top-0 z-40">
-            <h2 class="text-lg font-bold text-gray-800 uppercase tracking-tighter">Add Order</h2>
-            <div class="flex gap-4 items-center">
-                <span class="bg-green-100 text-green-700 text-[10px] px-3 py-1 rounded-full font-bold">● Active Session</span>
-            </div>
-        </header>
+                <section>
+                    <span class="input-label">💬 WHATSAPP MESSAGE</span>
+                    <textarea id="rawMessage" rows="4" class="w-full p-3 border-2 border-pink-50 rounded-lg focus:outline-none text-xs" placeholder="Paste message here..."></textarea>
+                    <button onclick="formatWithGroq()" id="btnText" class="w-full mt-2 btn-pink text-white py-2 rounded font-bold text-xs shadow">Format Info ✨</button>
+                </section>
 
-        <div class="flex flex-col xl:flex-row flex-1 p-4 lg:p-6 gap-6">
-            
-            <!-- LEFT COLUMN: INPUT FORM -->
-            <div class="w-full xl:w-[380px] bg-white border border-gray-200 rounded-xl shadow-sm p-5 h-fit">
-                <div class="flex border-b border-gray-100 pb-3 mb-4 items-center">
-                    <span class="text-[10px] font-black text-pink-600 uppercase tracking-widest">🚀 Paste & Import Mode</span>
-                </div>
+                <div class="space-y-2 bg-gray-50 p-3 rounded-lg border">
+                    <input type="text" id="outName" oninput="updatePreview()" placeholder="Name" class="w-full p-2 border rounded text-xs">
+                    <input type="text" id="outPhone" oninput="updatePreview()" placeholder="Mobile Number 1" class="w-full p-2 border rounded text-xs">
+                    <input type="text" id="outPhone2" oninput="updatePreview()" placeholder="Mobile Number 2" class="w-full p-2 border rounded text-xs">
+                    <textarea id="outAddress" rows="2" oninput="updatePreview()" placeholder="Address" class="w-full p-2 border rounded text-xs"></textarea>
+                    <input type="text" id="outCity" oninput="updatePreview()" placeholder="City" class="w-full p-2 border rounded text-xs">
+                    <input type="hidden" id="outProduct">
+                </div>
 
-                <div class="space-y-4">
-                    <section>
-                        <span class="input-label">🆔 IDS</span>
-                        <div class="grid grid-cols-2 gap-3">
-                            <input type="text" id="waybillNo" placeholder="Waybill (Auto)" class="w-full border rounded p-2 bg-gray-50 text-xs">
-                            <input type="text" id="orderId" placeholder="Order ID (Auto)" class="w-full border rounded p-2 bg-gray-50 text-xs">
-                        </div>
-                    </section>
+                <section class="bg-pink-50/20 p-3 rounded-lg border border-pink-100">
+                    <span class="input-label">🛍 ADD ITEMS</span>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        <input type="text" id="productSearch" list="productOptions" onchange="syncPriceFromSearch()" placeholder="Select Product..." class="flex-1 min-w-[120px] p-2 border rounded text-xs font-semibold">
+                        <datalist id="productOptions">
+                            </datalist>
+                        <input type="number" id="customPrice" placeholder="Price" class="w-20 p-2 border rounded text-xs font-bold">
+                        <input type="number" id="prodQty" value="1" class="w-10 p-2 border rounded text-xs text-center">
+                        <button onclick="addToCartFromSearch()" class="btn-pink text-white px-3 py-1 rounded font-bold text-xs">ADD</button>
+                    </div>
+                </section>
+            </div>
+        </div>
 
-                    <section>
-                        <span class="input-label">📋 DETAILS</span>
-                        <div class="grid grid-cols-2 gap-3">
-                            <select id="salesPerson" class="w-full border rounded p-2 text-xs font-semibold">
-                                <option value="">-- Select --</option>
-                            </select>
-                            <input type="date" id="orderDate" value="2026-04-26" class="w-full border rounded p-2 text-xs">
-                        </div>
-                    </section>
+        <div class="flex-1 p-4 lg:p-6 bg-gray-50 space-y-6 overflow-x-hidden">
+            
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-lg stat-card border-pink-500 shadow-sm">
+                    <div id="orderCount" class="text-2xl font-black">0</div>
+                    <div class="text-[10px] text-gray-400 uppercase font-bold">Orders</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg stat-card border-yellow-500 shadow-sm">
+                    <div class="text-2xl font-black text-blue-700">Rs. <span id="finalPriceDisplay">0</span></div>
+                    <div class="text-[10px] text-gray-400 uppercase font-bold">Total COD</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg stat-card border-green-500 shadow-sm">
+                    <div class="text-2xl font-black">—</div>
+                    <div class="text-[10px] text-gray-400 uppercase font-bold">Sales Person</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg stat-card border-blue-500 shadow-sm">
+                    <button class="bg-[#22C55E] text-white w-full h-full rounded font-bold text-xs">EXPORT EXCEL</button>
+                </div>
+            </div>
 
-                    <section>
-                        <span class="input-label">💬 WHATSAPP MESSAGE</span>
-                        <textarea id="rawMessage" rows="4" class="w-full p-3 border-2 border-pink-50 rounded-lg focus:outline-none text-xs" placeholder="Paste message here..."></textarea>
-                        <button onclick="formatWithGroq()" id="btnText" class="w-full mt-2 btn-pink text-white py-2 rounded font-bold text-xs shadow">Format Info ✨</button>
-                    </section>
+            <div class="bg-white rounded-xl shadow-sm border border-pink-100 overflow-hidden">
+                <div class="header-bg p-3 flex justify-between items-center">
+                    <h4 class="text-white text-xs font-bold uppercase tracking-widest">📦 Orders Preview</h4>
+                    <button onclick="clearTable()" class="bg-red-500/20 text-red-300 text-[9px] px-3 py-1 rounded border border-red-500/40 font-bold">CLEAR ALL</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-[10px] text-left border-collapse min-w-[1000px]">
+                        <thead class="bg-[#2D1B1B] text-[#C08497] uppercase">
+                            <tr>
+                                <th class="p-3 border-r border-white/5">#</th>
+                                <th class="p-3 border-r border-white/5">Waybill No</th>
+                                <th class="p-3 border-r border-white/5">Order No</th>
+                                <th class="p-3 border-r border-white/5">Customer Name</th>
+                                <th class="p-3 border-r border-white/5">Address</th>
+                                <th class="p-3 border-r border-white/5">Order Description</th>
+                                <th class="p-3 border-r border-white/5">Phone 1</th>
+                                <th class="p-3 border-r border-white/5">Phone 2</th>
+                                <th class="p-3 border-r border-white/5">COD (Rs.)</th>
+                                <th class="p-3">City</th>
+                                <th class="p-3">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderTableBody" class="divide-y divide-gray-100">
+                             <tr><td colspan="11" class="p-10 text-center text-gray-300 italic">No orders added to preview.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-                    <div class="space-y-2 bg-gray-50 p-3 rounded-lg border">
-                        <input type="text" id="outName" oninput="updatePreview()" placeholder="Name" class="w-full p-2 border rounded text-xs">
-                        <input type="text" id="outPhone" oninput="updatePreview()" placeholder="Mobile Number 1" class="w-full p-2 border rounded text-xs">
-                        <input type="text" id="outPhone2" oninput="updatePreview()" placeholder="Mobile Number 2" class="w-full p-2 border rounded text-xs">
-                        <textarea id="outAddress" rows="2" oninput="updatePreview()" placeholder="Address" class="w-full p-2 border rounded text-xs"></textarea>
-                        <input type="text" id="outCity" oninput="updatePreview()" placeholder="City" class="w-full p-2 border rounded text-xs">
-                    </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-orange-100 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <span class="input-label text-orange-600">WhatsApp Preview</span>
+                    <textarea id="waPreview" rows="8" class="w-full p-3 border rounded bg-yellow-50 text-[10px] font-mono" readonly></textarea>
+                </div>
+                <div class="space-y-3">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <span class="input-label">Discount</span>
+                            <select id="discountRate" onchange="renderCart(); updatePreview();" class="w-full p-2 border rounded text-xs font-bold bg-green-50">
+                                <option value="0">0</option><option value="100">100</option><option value="200">200</option><option value="500">500</option>
+                            </select>
+                        </div>
+                        <div>
+                            <span class="input-label">Delivery</span>
+                            <select id="delOption" onchange="handleDelOption()" class="w-full p-2 border rounded text-xs font-bold">
+                                <option value="yes">425.00</option><option value="no">0.00</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onclick="shareToWhatsApp()" class="w-full bg-[#22C55E] text-white py-3 rounded-lg font-bold text-xs shadow-md">SEND TO WHATSAPP 🚀</button>
+                    <button onclick="saveOrder()" class="w-full header-bg text-white py-3 rounded-lg font-bold text-xs">SAVE TO DATABASE 💾</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    <section class="bg-pink-50/20 p-3 rounded-lg border border-pink-100">
-                        <span class="input-label">🛍 ADD ITEMS</span>
-                        <div class="flex flex-col gap-2 mt-2">
-                            <input type="text" id="productSearch" list="productOptions" onchange="syncPriceFromSearch()" placeholder="Select Product..." class="w-full p-2 border rounded text-xs font-semibold">
-                            <datalist id="productOptions"></datalist>
-                            <div class="flex gap-2">
-                                <input type="number" id="customPrice" placeholder="Price" class="flex-1 p-2 border rounded text-xs font-bold">
-                                <input type="number" id="prodQty" value="1" class="w-12 p-2 border rounded text-xs text-center">
-                                <button onclick="addToCartFromSearch()" class="btn-pink text-white px-3 py-1 rounded font-bold text-xs">ADD</button>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-            </div>
+	<div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-white w-full max-w-4xl h-[500px] rounded-xl shadow-2xl flex overflow-hidden border">
+            <div class="w-1/3 bg-gray-100 border-r flex flex-col">
+                <div class="p-4 border-b bg-pink-600 text-white font-bold">⚙️ Settings</div>
+                <nav class="flex-1 p-2 space-y-1">
+                    <button onclick="showTab('salesTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition active-tab" id="btn-salesTab">
+                        👤 Sales Team
+                    </button>
+                    <button onclick="showTab('productsTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition" id="btn-productsTab">
+                        🛍 Manage Products
+                    </button>
+                    <button onclick="showTab('deliveryTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition" id="btn-deliveryTab">
+                        🚚 Delivery Charges
+                    </button>
+                </nav>
+                <div class="p-4 border-t space-y-2">
+                    <button onclick="saveSettings()" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700">SAVE ALL</button>
+                    <button onclick="toggleSettings()" class="w-full bg-gray-300 text-gray-700 py-2 rounded-lg font-bold">CLOSE</button>
+                </div>
+            </div>
 
-            <!-- RIGHT COLUMN: DASHBOARD & PREVIEW -->
-            <div class="flex-1 space-y-6">
-                <!-- STATS CARDS -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-white p-4 rounded-xl stat-card border-pink-500 shadow-sm">
-                        <div id="orderCount" class="text-2xl font-black">0</div>
-                        <div class="text-[10px] text-gray-400 uppercase font-bold">Orders</div>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl stat-card border-yellow-500 shadow-sm">
-                        <div class="text-2xl font-black text-blue-700">Rs. <span id="finalPriceDisplay">0</span></div>
-                        <div class="text-[10px] text-gray-400 uppercase font-bold">Total COD</div>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl stat-card border-green-500 shadow-sm">
-                        <div class="text-2xl font-black">—</div>
-                        <div class="text-[10px] text-gray-400 uppercase font-bold">Sales Person</div>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl stat-card border-blue-500 shadow-sm">
-                        <button class="bg-[#22C55E] text-white w-full h-full rounded font-bold text-xs">EXPORT EXCEL</button>
-                    </div>
-                </div>
+            <div class="w-2/3 p-6 overflow-y-auto bg-white">
+                <div id="salesTab" class="tab-content">
+                    <h2 class="text-xl font-bold mb-4 text-blue-600">Manage Sales Team</h2>
+                    <div class="grid grid-cols-2 gap-2 mb-4 bg-blue-50 p-3 rounded-lg border border-blue-100">
+                        <input type="text" id="newSalesName" placeholder="Full Name" class="p-2 border rounded text-sm">
+                        <input type="text" id="newSalesShort" placeholder="Short Name" class="p-2 border rounded text-sm">
+                        <input type="text" id="newSalesPhone" placeholder="Mobile Number" class="p-2 border rounded text-sm">
+                        <input type="text" id="newSalesPos" placeholder="Position" class="p-2 border rounded text-sm">
+                        <button onclick="addNewSalesPerson()" class="col-span-2 bg-blue-600 text-white py-2 rounded font-bold">+ Add Person</button>
+                    </div>
+                    <table class="w-full text-xs border">
+                        <thead class="bg-gray-100">
+                            <tr><th class="p-2 text-left border">Name</th><th class="p-2 text-left border">Short</th><th class="p-2 text-left border">Mobile</th>
+							<th class="p-2 text-right border">Action</th>
+                        </thead>
+                        <tbody id="settingsSalesList" class="divide-y"></tbody>
+                    </table>
+                </div>
 
-                <!-- TABLE PREVIEW -->
-                <div class="bg-white rounded-xl shadow-sm border border-pink-100 overflow-hidden">
-                    <div class="header-bg p-3 flex justify-between items-center">
-                        <h4 class="text-white text-xs font-bold uppercase tracking-widest">📦 Orders Preview</h4>
-                        <button onclick="clearTable()" class="bg-red-500/20 text-red-300 text-[9px] px-3 py-1 rounded border border-red-500/40 font-bold">CLEAR ALL</button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-[10px] text-left border-collapse min-w-[1000px]">
-                            <thead class="bg-[#2D1B1B] text-[#C08497] uppercase">
-                                <tr>
-                                    <th class="p-3 border-r border-white/5">#</th>
-                                    <th class="p-3 border-r border-white/5">Waybill No</th>
-                                    <th class="p-3 border-r border-white/5">Order No</th>
-                                    <th class="p-3 border-r border-white/5">Customer Name</th>
-                                    <th class="p-3 border-r border-white/5">Address</th>
-                                    <th class="p-3 border-r border-white/5">Order Description</th>
-                                    <th class="p-3 border-r border-white/5">Phone 1</th>
-                                    <th class="p-3 border-r border-white/5">Phone 2</th>
-                                    <th class="p-3 border-r border-white/5">COD (Rs.)</th>
-                                    <th class="p-3">City</th>
-                                    <th class="p-3">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="orderTableBody" class="divide-y divide-gray-100">
-                                 <tr><td colspan="11" class="p-10 text-center text-gray-300 italic">No orders added to preview.</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                <div id="productsTab" class="tab-content hidden">
+                    <h2 class="text-xl font-bold mb-4 text-pink-600">Manage Products</h2>
+                    <div class="grid grid-cols-3 gap-2 mb-4 bg-pink-50 p-3 rounded-lg border border-pink-100">
+                        <input type="text" id="newProdName" placeholder="Product Name" class="p-2 border rounded text-sm col-span-2">
+                        <input type="text" id="newProdShort" placeholder="Short" class="p-2 border rounded text-sm">
+                        <input type="number" id="newProdPrice" placeholder="Price" class="p-2 border rounded text-sm col-span-2">
+                        <button onclick="addNewProduct()" class="bg-pink-600 text-white py-2 rounded font-bold">+ Add</button>
+                    </div>
+                    <table class="w-full text-xs border">
+                        <thead class="bg-gray-100 uppercase text-[10px]">
+                            <tr>
+								<th class="p-2 text-left border">Product</th>
+								<th class="p-2 text-left border">Short</th><th class="p-2 text-left border">Price</th>
+								<th class="p-2 text-right border">Action</th>
+						</tr>
+                        </thead>
+                        <tbody id="settingsProductList" class="divide-y"></tbody>
+                    </table>
+                </div>
 
-                <!-- WHATSAPP & DATABASE ACTIONS -->
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-orange-100 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <span class="input-label text-orange-600">WhatsApp Preview</span>
-                        <textarea id="waPreview" rows="8" class="w-full p-3 border rounded bg-yellow-50 text-[10px] font-mono" readonly></textarea>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <span class="input-label">Discount</span>
-                                <select id="discountRate" onchange="renderCart(); updatePreview();" class="w-full p-2 border rounded text-xs font-bold bg-green-50">
-                                    <option value="0">0</option><option value="100">100</option><option value="200">200</option><option value="500">500</option>
-                                </select>
-                            </div>
-                            <div>
-                                <span class="input-label">Delivery</span>
-                                <select id="delOption" onchange="handleDelOption()" class="w-full p-2 border rounded text-xs font-bold">
-                                    <option value="yes">425.00</option><option value="no">0.00</option>
-                                </select>
-                            </div>
-                        </div>
-                        <button onclick="shareToWhatsApp()" class="w-full bg-[#22C55E] text-white py-3 rounded-lg font-bold text-xs shadow-md">SEND TO WHATSAPP 🚀</button>
-                        <button onclick="saveOrder()" class="w-full header-bg text-white py-3 rounded-lg font-bold text-xs">SAVE TO DATABASE 💾</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-</div>
+                <div id="deliveryTab" class="tab-content hidden">
+                    <h2 class="text-xl font-bold mb-4 text-orange-600">Delivery Charges</h2>
+                    <div class="bg-orange-50 p-6 rounded-lg border border-orange-100">
+                        <label class="block text-sm font-bold mb-2">Default Delivery Fee (LKR):</label>
+                        <input type="number" id="settingDelCharge" class="w-full p-3 border rounded-lg text-lg font-bold" placeholder="425.00">
+                        <p class="text-xs text-gray-500 mt-2 italic">* This amount will be added to orders by default.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<!-- SETTINGS MODAL -->
-<div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-[100] p-4">
-    <div class="bg-white w-full max-w-4xl h-[500px] rounded-xl shadow-2xl flex overflow-hidden border">
-        <div class="w-1/3 bg-gray-100 border-r flex flex-col">
-            <div class="p-4 border-b bg-pink-600 text-white font-bold">⚙️ Settings</div>
-            <nav class="flex-1 p-2 space-y-1">
-                <button onclick="showTab('salesTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition active-tab" id="btn-salesTab">👤 Sales Team</button>
-                <button onclick="showTab('productsTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition" id="btn-productsTab">🛍 Manage Products</button>
-                <button onclick="showTab('deliveryTab')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-2 font-medium hover:bg-gray-200 transition" id="btn-deliveryTab">🚚 Delivery Charges</button>
-            </nav>
-            <div class="p-4 border-t space-y-2">
-                <button onclick="saveSettings()" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold hover:bg-green-700">SAVE ALL</button>
-                <button onclick="toggleSettings()" class="w-full bg-gray-300 text-gray-700 py-2 rounded-lg font-bold">CLOSE</button>
-            </div>
-        </div>
-        <div class="w-2/3 p-6 overflow-y-auto bg-white">
-            <div id="salesTab" class="tab-content">
-                <h2 class="text-xl font-bold mb-4 text-blue-600">Manage Sales Team</h2>
-                <div class="grid grid-cols-2 gap-2 mb-4 bg-blue-50 p-3 rounded-lg border border-blue-100">
-                    <input type="text" id="newSalesName" placeholder="Full Name" class="p-2 border rounded text-sm">
-                    <input type="text" id="newSalesShort" placeholder="Short Name" class="p-2 border rounded text-sm">
-                    <button onclick="addNewSalesPerson()" class="col-span-2 bg-blue-600 text-white py-2 rounded font-bold">+ Add Person</button>
-                </div>
-                <table class="w-full text-xs border"><tbody id="settingsSalesList"></tbody></table>
-            </div>
-            <div id="productsTab" class="tab-content hidden">
-                <h2 class="text-xl font-bold mb-4 text-pink-600">Manage Products</h2>
-                <div class="grid grid-cols-2 gap-2 mb-4 bg-pink-50 p-3 rounded-lg border border-pink-100">
-                    <input type="text" id="newProdName" placeholder="Product Name" class="p-2 border rounded text-sm">
-                    <input type="number" id="newProdPrice" placeholder="Price" class="p-2 border rounded text-sm">
-                    <button onclick="addNewProduct()" class="col-span-2 bg-pink-600 text-white py-2 rounded font-bold">+ Add</button>
-                </div>
-                <table class="w-full text-xs border"><tbody id="settingsProductList"></tbody></table>
-            </div>
-            <div id="deliveryTab" class="tab-content hidden">
-                <h2 class="text-xl font-bold mb-4 text-orange-600">Delivery Charges</h2>
-                <input type="number" id="settingDelCharge" class="w-full p-3 border rounded-lg text-lg font-bold" placeholder="425.00">
-            </div>
-        </div>
-    </div>
-</div>
+    <script>
+		// --- 1. CONFIG & DATA ---
+		let cart = [];
+		let deliveryCharge = 425.00;
+		let settingsData = {
+			products: [],
+			salesPersons: [],
+			delCharge: 425
+		};
 
-<script>
-// --- ALL ORIGINAL LOGIC PRESERVED ---
-let cart = [];
-let deliveryCharge = 425.00;
-let settingsData = { products: [], salesPersons: [], delCharge: 425 };
+		// Auth check
+		(function() {
+			if (sessionStorage.getItem("isLoggedIn") !== "true") {
+				window.location.replace("login.html");
+			}
+		})();
 
-// Auth & Nav
-(function() { if (sessionStorage.getItem("isLoggedIn") !== "true") { /* window.location.replace("login.html"); */ } })();
-function logout() { localStorage.clear(); sessionStorage.clear(); window.location.replace("login.html"); }
-function toggleSettings() { document.getElementById('settingsModal').classList.toggle('hidden'); }
-function showTab(tabId) {
-    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active-tab'));
-    document.getElementById(tabId).classList.remove('hidden');
-    document.getElementById('btn-' + tabId).classList.add('active-tab');
+		function logout() {
+			localStorage.clear();
+			sessionStorage.clear();
+			window.location.replace("login.html");
+		}
+
+		// --- 2. MODAL & TAB CONTROL ---
+		function toggleSettings() {
+			const modal = document.getElementById('settingsModal');
+			modal.classList.toggle('hidden');
+		}
+
+		function showTab(tabId) {
+			document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+			document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active-tab'));
+			document.getElementById(tabId).classList.remove('hidden');
+			document.getElementById('btn-' + tabId).classList.add('active-tab');
+		}
+
+		// --- 3. DASHBOARD LOGIC ---
+		function handleDelOption() {
+			deliveryCharge = (document.getElementById('delOption').value === "yes") ? settingsData.delCharge : 0.00;
+			renderCart();
+			updatePreview();
+		}
+
+		function syncPriceFromSearch() {
+			const val = document.getElementById('productSearch').value;
+			const opts = document.getElementById('productOptions').options;
+			for (let i = 0; i < opts.length; i++) {
+				if (opts[i].value === val) {
+					document.getElementById('customPrice').value = opts[i].getAttribute('data-price');
+					break;
+				}
+			}
+		}
+
+		function addToCartFromSearch() {
+			const name = document.getElementById('productSearch').value;
+			const price = parseFloat(document.getElementById('customPrice').value);
+			const qty = parseFloat(document.getElementById('prodQty').value);
+			if (!name || isNaN(price)) return alert("Select product!");
+			
+			cart.push({ name, price, qty });
+			renderCart();
+			updatePreview();
+		}
+
+		function removeFromCart(index) {
+			cart.splice(index, 1);
+			renderCart();
+			updatePreview();
+		}
+
+		function renderCart() {
+			const tbody = document.getElementById('orderTableBody');
+			const name = document.getElementById('outName').value;
+			const addr = document.getElementById('outAddress').value;
+			const p1 = document.getElementById('outPhone').value;
+			const p2 = document.getElementById('outPhone2').value;
+			const city = document.getElementById('outCity').value;
+			const waybill = document.getElementById('waybillNo').value || "Auto";
+			const orderId = document.getElementById('orderId').value || "Auto";
+
+			let subtotal = 0;
+			let description = cart.map(item => `${item.name} (${item.qty})`).join(", ");
+			cart.forEach(item => subtotal += (item.price * item.qty));
+			
+			const discount = parseFloat(document.getElementById('discountRate').value) || 0;
+			const final = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
+
+			if (cart.length > 0) {
+				tbody.innerHTML = `
+					<tr class="hover:bg-pink-50/30">
+						<td class="p-3">1</td>
+						<td class="p-3 font-bold">${waybill}</td>
+						<td class="p-3">${orderId}</td>
+						<td class="p-3 font-bold">${name}</td>
+						<td class="p-3 text-gray-500">${addr}</td>
+						<td class="p-3 text-blue-600 font-medium">${description}</td>
+						<td class="p-3">${p1}</td>
+						<td class="p-3">${p2}</td>
+						<td class="p-3 font-black text-red-600">Rs. ${final.toFixed(2)}</td>
+						<td class="p-3">${city}</td>
+						<td class="p-3 text-center">
+							<button onclick="removeFromCart(0)" class="text-red-500 font-bold">✕</button>
+						</td>
+					</tr>`;
+			} else {
+				tbody.innerHTML = '<tr><td colspan="11" class="p-10 text-center text-gray-300 italic">No orders added to preview.</td></tr>';
+			}
+
+			document.getElementById('finalPriceDisplay').innerText = final.toFixed(2);
+			document.getElementById('orderCount').innerText = cart.length > 0 ? 1 : 0;
+		}
+
+		function updatePreview() {
+			const name = document.getElementById('outName').value || "...";
+			const address = document.getElementById('outAddress').value || "...";
+			const phone = document.getElementById('outPhone').value || "...";
+			const discount = parseFloat(document.getElementById('discountRate').value) || 0;
+
+			let subtotal = 0;
+			let itemsList = "";
+			cart.forEach((item) => {
+				subtotal += (item.price * item.qty);
+				itemsList += `• ${item.name} x${item.qty}\n`;
+			});
+
+			const final = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
+			
+			let msg = `🌸 *C Pearl White - Order* 🌸\n`;
+			msg += `👤 Name: ${name}\n`;
+			msg += `📱 Phone: ${phone}\n`;
+			msg += `📍 Address: ${address}\n\n`;
+			msg += `📦 Items:\n${itemsList || "None"}\n`;
+			msg += `💰 *TOTAL COD: Rs. ${final.toFixed(2)}*`;
+
+			document.getElementById('waPreview').value = msg;
+			renderCart();
+		}
+
+		// --- 4. SETTINGS SYSTEM LOGIC ---
+		function addNewSalesPerson() {
+			const name = document.getElementById('newSalesName').value.trim();
+			const short = document.getElementById('newSalesShort').value.trim();
+			const phone = document.getElementById('newSalesPhone').value.trim();
+			const pos = document.getElementById('newSalesPos').value.trim();
+			if (!name || !short) return alert("Fill Name and Short Name!");
+			settingsData.salesPersons.push({ name, short, phone, pos });
+			renderSettingsLists();
+			['newSalesName', 'newSalesShort', 'newSalesPhone', 'newSalesPos'].forEach(id => document.getElementById(id).value = '');
+		}
+
+		function addNewProduct() {
+			const name = document.getElementById('newProdName').value.trim();
+			const short = document.getElementById('newProdShort').value.trim();
+			const price = document.getElementById('newProdPrice').value.trim();
+			if (!name || !price) return alert("Fill Product Name and Price!");
+			settingsData.products.push({ name, short, price });
+			renderSettingsLists();
+			['newProdName', 'newProdShort', 'newProdPrice'].forEach(id => document.getElementById(id).value = '');
+		}
+
+		function removeItem(type, index) {
+			if (type === 'sales') settingsData.salesPersons.splice(index, 1);
+			if (type === 'product') settingsData.products.splice(index, 1);
+			renderSettingsLists();
+		}
+
+		function renderSettingsLists() {
+			const sBody = document.getElementById('settingsSalesList');
+			sBody.innerHTML = settingsData.salesPersons.map((s, i) => `
+				<tr class="hover:bg-gray-50 text-[11px]">
+            	<td class="p-2 border font-bold">${s.name}</td>
+            	<td class="p-2 border text-pink-600 font-bold">${s.short}</td>
+            	<td class="p-2 border">${s.phone}</td>
+            	<td class="p-2 border text-right space-x-2">
+					<button onclick="editItem('sales', ${i})" class="text-blue-500 hover:text-blue-700 font-bold">EDIT</button>
+                	<button onclick="removeItem('sales', ${i})" class="text-red-500 font-bold">✕</button>
+            	</td>
+        	</tr>`).join('');
+
+			const pBody = document.getElementById('settingsProductList');
+			pBody.innerHTML = settingsData.products.map((p, i) => `
+				<tr class="hover:bg-gray-50 text-[11px]">
+            <td class="p-2 border font-bold">${p.name}</td>
+            <td class="p-2 border text-blue-600 font-bold">${p.short || '-'}</td>
+            <td class="p-2 border font-mono">Rs. ${parseFloat(p.price).toFixed(2)}</td>
+            <td class="p-2 border text-right space-x-2">
+				<button onclick="editItem('product', ${i})" class="text-blue-500 hover:text-blue-700 font-bold">EDIT</button>
+                <button onclick="removeItem('product', ${i})" class="text-red-500 font-bold">✕</button>
+            </td>
+        </tr>`).join('');
 }
 
-// Dashboard Functions
-function handleDelOption() {
-    deliveryCharge = (document.getElementById('delOption').value === "yes") ? settingsData.delCharge : 0.00;
-    renderCart();
-    updatePreview();
+		function editItem(type, index) {
+    if (type === 'sales') {
+        const item = settingsData.salesPersons[index];
+        document.getElementById('newSalesName').value = item.name;
+        document.getElementById('newSalesShort').value = item.short;
+        document.getElementById('newSalesPhone').value = item.phone;
+        
+        settingsData.salesPersons.splice(index, 1);
+    } else {
+        const item = settingsData.products[index];
+        document.getElementById('newProdName').value = item.name;
+        document.getElementById('newProdShort').value = item.short;
+        document.getElementById('newProdPrice').value = item.price;
+        settingsData.products.splice(index, 1);
+    }
+    renderSettingsLists(); 
 }
+		
+		// Apply settings to Dashboard UI
+		function applySettingsToDashboard() {
+			// Update Delivery Option
+			const delOpt = document.getElementById('delOption');
+			if(delOpt) delOpt.options[0].text = parseFloat(settingsData.delCharge).toFixed(2);
+			deliveryCharge = settingsData.delCharge;
 
-function syncPriceFromSearch() {
-    const val = document.getElementById('productSearch').value;
-    const opts = document.getElementById('productOptions').options;
-    for (let i = 0; i < opts.length; i++) {
-        if (opts[i].value === val) {
-            document.getElementById('customPrice').value = opts[i].getAttribute('data-price');
-            break;
-        }
-    }
-}
+			// Update Sales Dropdown
+			const salesSelect = document.getElementById('salesPerson');
+			salesSelect.innerHTML = '<option value="">-- Select --</option>' + 
+				settingsData.salesPersons.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
 
-function addToCartFromSearch() {
-    const name = document.getElementById('productSearch').value;
-    const price = parseFloat(document.getElementById('customPrice').value);
-    const qty = parseFloat(document.getElementById('prodQty').value);
-    if (!name || isNaN(price)) return alert("Select product!");
-    cart.push({ name, price, qty });
-    renderCart();
-    updatePreview();
-}
+			// Update Products Datalist
+			const dataList = document.getElementById('productOptions');
+			dataList.innerHTML = settingsData.products.map(p => 
+				`<option value="${p.name} (${p.short})" data-price="${p.price}">`).join('');
+		}
 
-function renderCart() {
-    const tbody = document.getElementById('orderTableBody');
-    const name = document.getElementById('outName').value;
-    const addr = document.getElementById('outAddress').value;
-    const p1 = document.getElementById('outPhone').value;
-    const city = document.getElementById('outCity').value;
-    const waybill = document.getElementById('waybillNo').value || "Auto";
-    const orderId = document.getElementById('orderId').value || "Auto";
+		async function saveSettings() {
+			const salesStr = settingsData.salesPersons.map(s => `${s.name}|${s.short}|${s.phone}|${s.pos}`).join('\n');
+			const prodsStr = settingsData.products.map(p => `${p.name},${p.short},${p.price}`).join('\n');
+			const delCharge = document.getElementById('settingDelCharge').value;
 
-    let subtotal = 0;
-    let description = cart.map(item => `${item.name} (${item.qty})`).join(", ");
-    cart.forEach(item => subtotal += (item.price * item.qty));
-    const discount = parseFloat(document.getElementById('discountRate').value) || 0;
-    const final = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
+			try {
+				const res = await fetch('/manage-settings', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ del_charge: delCharge, sales_persons: salesStr, products: prodsStr })
+				});
+				if (res.ok) {
+					alert("Settings Saved Successfully! ✅");
+					settingsData.delCharge = parseFloat(delCharge);
+					applySettingsToDashboard();
+					toggleSettings();
+				}
+			} catch (err) { alert("Error saving settings."); }
+		}
 
-    if (cart.length > 0) {
-        tbody.innerHTML = `<tr class="hover:bg-pink-50/30">
-            <td class="p-3">1</td><td class="p-3 font-bold">${waybill}</td><td class="p-3">${orderId}</td>
-            <td class="p-3 font-bold">${name}</td><td class="p-3 text-gray-500">${addr}</td>
-            <td class="p-3 text-blue-600 font-medium">${description}</td><td class="p-3">${p1}</td>
-            <td class="p-3">-</td><td class="p-3 font-black text-red-600">Rs. ${final.toFixed(2)}</td>
-            <td class="p-3">${city}</td><td class="p-3 text-center"><button onclick="cart=[];renderCart();" class="text-red-500">✕</button></td></tr>`;
-    } else {
-        tbody.innerHTML = '<tr><td colspan="11" class="p-10 text-center text-gray-300 italic">No orders added to preview.</td></tr>';
-    }
-    document.getElementById('finalPriceDisplay').innerText = final.toFixed(2);
-    document.getElementById('orderCount').innerText = cart.length > 0 ? 1 : 0;
-}
+		// --- 5. INITIAL LOAD & AI ---
+		window.addEventListener('DOMContentLoaded', async () => {
+			try {
+				const response = await fetch('/manage-settings');
+				if (response.ok) {
+					const data = await response.json();
+					if (data) {
+						settingsData.delCharge = data.del_charge || 425;
+						document.getElementById('settingDelCharge').value = settingsData.delCharge;
+						
+						if (data.sales_persons) {
+							settingsData.salesPersons = data.sales_persons.split('\n').filter(l => l.trim()).map(line => {
+								const [name, short, phone, pos] = line.split('|');
+								return { name, short, phone, pos };
+							});
+						}
+						if (data.products) {
+							settingsData.products = data.products.split('\n').filter(l => l.trim()).map(line => {
+								const [name, short, price] = line.split(',');
+								return { name, short, price };
+							});
+						}
+						renderSettingsLists();
+						applySettingsToDashboard();
+					}
+				}
+			} catch (e) { console.log("Load error"); }
+		});
 
-function updatePreview() {
-    const name = document.getElementById('outName').value || "...";
-    const address = document.getElementById('outAddress').value || "...";
-    const phone = document.getElementById('outPhone').value || "...";
-    const discount = parseFloat(document.getElementById('discountRate').value) || 0;
-    let subtotal = 0, itemsList = "";
-    cart.forEach(item => { subtotal += (item.price * item.qty); itemsList += `• ${item.name} x${item.qty}\n`; });
-    const final = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
-    let msg = `🌸 *C Pearl White - Order* 🌸\n👤 Name: ${name}\n📱 Phone: ${phone}\n📍 Address: ${address}\n\n📦 Items:\n${itemsList || "None"}\n💰 *TOTAL COD: Rs. ${final.toFixed(2)}*`;
-    document.getElementById('waPreview').value = msg;
-    renderCart();
-}
+		async function formatWithGroq() {
+			let rawText = document.getElementById('rawMessage').value;
+			const btn = document.getElementById('btnText');
+			if (!rawText) return alert("Enter message!");
+			btn.innerText = "Processing... ✨"; btn.disabled = true;
+			try {
+				const response = await fetch('/format-info', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ rawText: rawText })
+				});
+				const data = await response.json();
+				const result = JSON.parse(data.choices[0].message.content);
+				document.getElementById('outName').value = result.name || "";
+				document.getElementById('outAddress').value = result.address || "";
+				document.getElementById('outCity').value = result.city || "";
+				document.getElementById('outPhone').value = result.phone || "";
+				document.getElementById('outPhone2').value = result.phone2 || "";
+				updatePreview();
+			} catch (error) { alert("AI Error."); } finally {
+				btn.innerText = "Format Info ✨"; btn.disabled = false;
+			}
+		}
 
-// Settings Logic
-function addNewSalesPerson() {
-    const name = document.getElementById('newSalesName').value.trim();
-    const short = document.getElementById('newSalesShort').value.trim();
-    if (!name || !short) return alert("Fill fields!");
-    settingsData.salesPersons.push({ name, short });
-    renderSettingsLists();
-}
+		function shareToWhatsApp() {
+			const message = document.getElementById('waPreview').value;
+			window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+		}
 
-function addNewProduct() {
-    const name = document.getElementById('newProdName').value.trim();
-    const price = document.getElementById('newProdPrice').value.trim();
-    if (!name || !price) return alert("Fill fields!");
-    settingsData.products.push({ name, price });
-    renderSettingsLists();
-}
+		function saveOrder() {
+			const name = document.getElementById('outName').value;
+			const phone = document.getElementById('outPhone').value;
+			if (!name || !phone || cart.length === 0) return alert("Fill customer info and add items!");
+			
+			const tbody = document.getElementById('orderTableBody');
+			if (tbody.rows.length === 1 && tbody.rows[0].cells.length < 5) tbody.innerHTML = '';
 
-function renderSettingsLists() {
-    document.getElementById('settingsSalesList').innerHTML = settingsData.salesPersons.map((s, i) => `<tr><td class="p-2 border">${s.name}</td><td class="p-2 border text-right"><button onclick="settingsData.salesPersons.splice(${i},1);renderSettingsLists();" class="text-red-500">✕</button></td></tr>`).join('');
-    document.getElementById('settingsProductList').innerHTML = settingsData.products.map((p, i) => `<tr><td class="p-2 border">${p.name}</td><td class="p-2 border text-right"><button onclick="settingsData.products.splice(${i},1);renderSettingsLists();" class="text-red-500">✕</button></td></tr>`).join('');
-    applySettingsToDashboard();
-}
+			const description = cart.map(item => `${item.name} (${item.qty})`).join(", ");
+			let subtotal = 0;
+			cart.forEach(item => subtotal += (item.price * item.qty));
+			const discount = parseFloat(document.getElementById('discountRate').value) || 0;
+			const finalTotal = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
 
-function applySettingsToDashboard() {
-    const salesSelect = document.getElementById('salesPerson');
-    salesSelect.innerHTML = '<option value="">-- Select --</option>' + settingsData.salesPersons.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
-    document.getElementById('productOptions').innerHTML = settingsData.products.map(p => `<option value="${p.name}" data-price="${p.price}">`).join('');
-}
+			const row = tbody.insertRow();
+			row.className = "hover:bg-pink-50/30 border-b border-gray-100";
+			row.innerHTML = `
+				<td class="p-3">${tbody.rows.length}</td>
+				<td class="p-3 font-bold">${document.getElementById('waybillNo').value || 'PENDING'}</td>
+				<td class="p-3">${document.getElementById('orderId').value || 'Auto'}</td>
+				<td class="p-3 font-bold">${name}</td>
+				<td class="p-3">${document.getElementById('outAddress').value}</td>
+				<td class="p-3 text-blue-600 font-medium">${description}</td>
+				<td class="p-3">${phone}</td>
+				<td class="p-3">${document.getElementById('outPhone2').value || '-'}</td>
+				<td class="p-3 font-black text-red-600">Rs. ${finalTotal.toFixed(2)}</td>
+				<td class="p-3">${document.getElementById('outCity').value}</td>
+				<td class="p-3 text-center"><button onclick="this.parentElement.parentElement.remove(); updateOrderStats();" class="text-red-500 font-bold">✕</button></td>
+			`;
+			updateOrderStats();
+			clearForm();
+		}
 
-async function formatWithGroq() {
-    let rawText = document.getElementById('rawMessage').value;
-    const btn = document.getElementById('btnText');
-    if (!rawText) return alert("Enter message!");
-    btn.innerText = "Processing... ✨"; btn.disabled = true;
-    try {
-        const response = await fetch('/format-info', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ rawText }) });
-        const data = await response.json();
-        const result = JSON.parse(data.choices[0].message.content);
-        document.getElementById('outName').value = result.name || "";
-        document.getElementById('outAddress').value = result.address || "";
-        document.getElementById('outCity').value = result.city || "";
-        document.getElementById('outPhone').value = result.phone || "";
-        updatePreview();
-    } catch (e) { alert("AI Error."); } finally { btn.innerText = "Format Info ✨"; btn.disabled = false; }
-}
+		function updateOrderStats() {
+			const rows = document.getElementById('orderTableBody').getElementsByTagName('tr');
+			let total = 0, count = 0;
+			for (let row of rows) {
+				if (row.cells.length > 5) {
+					const val = row.cells[8].innerText.replace('Rs. ', '');
+					total += parseFloat(val); count++;
+				}
+			}
+			document.getElementById('orderCount').innerText = count;
+			document.getElementById('finalPriceDisplay').innerText = total.toFixed(2);
+		}
 
-function shareToWhatsApp() {
-    const message = document.getElementById('waPreview').value;
-    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
-}
+		function clearForm() {
+			document.getElementById('outName').value = '';
+			document.getElementById('outPhone').value = '';
+			document.getElementById('outPhone2').value = '';
+			document.getElementById('outAddress').value = '';
+			document.getElementById('outCity').value = '';
+			document.getElementById('rawMessage').value = '';
+			cart = []; renderCart(); updatePreview();
+		}
 
-function saveOrder() {
-    if (!document.getElementById('outName').value || cart.length === 0) return alert("Fill info!");
-    alert("Order Saved to Database! (Simulated)");
-}
-
-function clearTable() {
-    document.getElementById('orderTableBody').innerHTML = '<tr><td colspan="11" class="p-10 text-center text-gray-300 italic">No orders added to preview.</td></tr>';
-}
-</script>
+        function clearTable() {
+            document.getElementById('orderTableBody').innerHTML = '<tr><td colspan="11" class="p-10 text-center text-gray-300 italic">No orders added to preview.</td></tr>';
+            updateOrderStats();
+        }
+    </script>
 </body>
 </html>
