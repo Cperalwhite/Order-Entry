@@ -3,23 +3,30 @@ export async function onRequestPost(context) {
     try {
         const data = await request.json();
         
-        // 1. Database එක සම්බන්ධද බලන්න
         if (!env.DB) {
-            return new Response(JSON.stringify({ error: "Database එක පේන්න නෑ (Binding error)" }), { status: 500 });
+            return new Response(JSON.stringify({ error: "Database Binding එක සොයාගත නොහැක!" }), { status: 500 });
         }
 
-        // 2. දත්ත Database එකට දාන්න
+        // ඔබ අලුතින් එවූ CREATE TABLE එකට අනුව සකස් කළ SQL එක
         await env.DB.prepare(`
-            INSERT INTO orders (waybill, order_id, customer_name, address, city, phone1, phone2, items, total_cod, sales_person)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO orders (
+                name, phone, phone2, address, city, 
+                items, total, sales_person, order_date
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
-            data.waybill, data.order_id, data.name, data.address, data.city, 
-            data.phone, data.phone2, data.items_description, data.total_cod, data.sales_person
+            data.name,           // Frontend එකෙන් එන name
+            data.phone,          // Frontend එකෙන් එන phone
+            data.phone2,         // Frontend එකෙන් එන phone2
+            data.address,        // Frontend එකෙන් එන address
+            data.city,           // Frontend එකෙන් එන city
+            data.items_description, // Frontend එකෙන් එන items (items_description ලෙස යැවූ නිසා)
+            data.total_cod,      // Frontend එකෙන් එන total (total_cod ලෙස යැවූ නිසා)
+            data.sales_person,   // Frontend එකෙන් එන sales_person
+            new Date().toISOString() // දැනට තිබෙන දිනය (order_date සඳහා)
         ).run();
 
         return new Response(JSON.stringify({ success: true }), { status: 200 });
     } catch (err) {
-        // වැරැද්ද මොකක්ද කියලා මෙතනින් බලාගන්න පුළුවන්
-        return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+        return new Response(JSON.stringify({ error: "SQL Error: " + err.message }), { status: 500 });
     }
 }
