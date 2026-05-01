@@ -779,16 +779,27 @@
     }
 
     function showAllOrdersSection() {
-    // 1. කලින් තිබුණු Preview Table එක සඟවන්න
-    const previewTable = document.querySelector('.bg-white.rounded-xl.shadow-sm.border.border-pink-100');
-    if (previewTable) previewTable.classList.add('hidden');
+    // වම්පස Panel එක සඟවනවා
+    document.querySelector('.lg\\:w-\\[350px\\]').style.display = 'none';
     
-    // 2. All Orders Section එක පෙන්වන්න
-    const allOrdersSec = document.getElementById('allOrdersSection');
-    allOrdersSec.classList.remove('hidden');
+    // Dashboard එක සඟවා All Orders පෙන්වනවා
+    document.getElementById('dashboardView').classList.add('hidden');
+    document.getElementById('allOrdersView').classList.remove('hidden');
     
-    // 3. දත්ත ගෙන්වා ගන්න
     refreshAllOrders();
+}
+
+function showNewOrderView() {
+    // වම්පස Panel එක නැවත පෙන්වනවා
+    document.querySelector('.lg\\:w-\\[350px\\]').style.display = 'flex';
+    
+    // All Orders සඟවා Dashboard පෙන්වනවා
+    document.getElementById('allOrdersView').classList.add('hidden');
+    document.getElementById('dashboardView').classList.remove('hidden');
+    
+    // Sidebar එකේ New Order එක active කරන්න
+    const newOrderBtn = document.querySelector('a[onclick*="showNewOrderView"]');
+    if(newOrderBtn) setSideActive(newOrderBtn);
 }
 
 async function refreshAllOrders() {
