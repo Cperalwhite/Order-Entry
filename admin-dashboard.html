@@ -366,7 +366,7 @@
 
     async function refreshAllOrders() {
         const tbody = document.getElementById('allOrdersTableBody');
-        tbody.innerHTML = '<tr><td colspan="12" class="p-10 text-center text-gray-400 animate-pulse">⏳ Database එකෙන් load වෙනවා...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="13" class="p-10 text-center text-gray-400 animate-pulse">⏳ Database එකෙන් load වෙනවා...</td></tr>';
 
         try {
             const response = await fetch('/get-all-orders');
