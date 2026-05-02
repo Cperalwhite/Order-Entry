@@ -863,6 +863,36 @@
     }
 }
 
+    document.addEventListener('DOMContentLoaded', function() {
+    flatpickr("#dateFilter", {
+        mode: "range",
+        dateFormat: "Y-m-d",
+        onClose: function(selectedDates, dateStr, instance) {
+            if (selectedDates.length === 2) {
+                const startDate = selectedDates[0].toISOString().split('T')[0];
+                const endDate = selectedDates[1].toISOString().split('T')[0];
+                filterOrdersByDate(startDate, endDate);
+            }
+        }
+    });
+});
+
+async function filterOrdersByDate(start, end) {
+    const tbody = document.getElementById('allOrdersTableBody');
+    tbody.innerHTML = '<tr><td colspan="13" class="p-10 text-center animate-pulse">⏳ Filtering Orders...</td></tr>';
+
+    try {
+        // Backend එකට startDate සහ endDate එක query params ලෙස යැවීම
+        const response = await fetch(`/get-all-orders?page=1&start=${start}&end=${end}`);
+        const data = await response.json();
+        
+        // table එක refresh කිරීමට දැනට ඇති refreshAllOrders වල logic එකම භාවිතා කරන්න
+        renderOrdersToTable(data.orders); 
+    } catch (e) {
+        console.error("Filter error", e);
+    }
+}
+
     async function deleteOrder(id, btn) {
     if (!confirm("මෙම Order එක අනිවාර්යයෙන්ම මකා දැමිය යුතුද?")) return;
 
