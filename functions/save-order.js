@@ -8,33 +8,37 @@ export async function onRequestPost(context) {
             return new Response(JSON.stringify({ error: "Database Binding (DB) සොයාගත නොහැක!" }), { status: 500 });
         }
 
-        // ඔබේ අලුත්ම CREATE TABLE එකට 100% ක් ගැලපෙන SQL එක
+        // SQL Query එකේ Headers 12 ක් ඇත (id ස්වයංක්‍රීයව සෑදේ)
         await env.DB.prepare(`
             INSERT INTO orders (
-                name, 
-                phone, 
-                phone2, 
-                address, 
-                city, 
-                items, 
-                total, 
-                discount, 
-                delivery, 
-                sales_person, 
-                order_date
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                order_date,
+                waybill_no,
+                order_no,
+                name,
+                address,
+                order_description,
+                phone,
+                phone2,
+                total,
+                city,
+                sales_person,
+                discount,
+                delivery
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
-            data.name || "N/A",
-            data.phone || "N/A",
-            data.phone2 || "-",
-            data.address || "N/A",
-            data.city || "N/A",
-            data.items_description || "N/A",
-            data.total_cod || 0,     // Table එකේ 'total' Column එකට යයි
-            data.discount || 0,      // අලුත් Column එක
-            data.delivery || 0,      // අලුත් Column එක
-            data.sales_person || "Admin",
-            new Date().toISOString() // order_date සඳහා
+            data.order_date || new Date().toISOString().split('T')[0], // Date
+            data.waybill || "PENDING",                                // Waybill No
+            data.order_no || "N/A",                                   // Order No
+            data.name || "N/A",                                      // Customer Name
+            data.address || "N/A",                                   // Address[cite: 2]
+            data.items || "No Description",                          // Order Description[cite: 2]
+            data.phone || "N/A",                                     // Phone[cite: 2]
+            data.phone2 || "-",                                      // Phone 2[cite: 2]
+            data.total || 0,                                         // COD (Rs.)[cite: 2]
+            data.city || "N/A",                                      // City[cite: 2]
+            data.sales_person || "Admin",                            // Sales Person[cite: 2]
+            data.discount || 0,                                      // Discount
+            data.delivery || 0                                       // Delivery
         ).run();
 
         return new Response(JSON.stringify({ success: true }), { 
