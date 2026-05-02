@@ -10,7 +10,7 @@ export async function onRequestGet(context) {
 
   try {
         
-    const { results } = await env.DB.prepare(
+    const { orders } = await env.DB.prepare(
       "SELECT * FROM orders ORDER BY id DESC LIMIT ? OFFSET ?"
     ).bind (limit, offset).all();
 
