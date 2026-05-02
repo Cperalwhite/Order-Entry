@@ -737,92 +737,100 @@
     }
 
     async function saveOrder() {
-        const name = document.getElementById('outName').value;
-        const rawPhone1 = document.getElementById('outPhone').value;
-        const rawPhone2 = document.getElementById('outPhone2').value;
+    const name = document.getElementById('outName').value;
+    const rawPhone1 = document.getElementById('outPhone').value;
+    const rawPhone2 = document.getElementById('outPhone2').value;
 
-        const cleanPhoneNumber = (num) => {
-            if (!num) return "";
-            let cleaned = num.replace(/\D/g, '');
-            if (cleaned.startsWith('94')) cleaned = cleaned.substring(2);
-            if (cleaned.startsWith('0')) cleaned = cleaned.substring(1);
-            return cleaned;
-        };
+    const cleanPhoneNumber = (num) => {
+        if (!num) return "";
+        let cleaned = num.replace(/\D/g, '');
+        if (cleaned.startsWith('94')) cleaned = cleaned.substring(2);
+        if (cleaned.startsWith('0')) cleaned = cleaned.substring(1);
+        return cleaned;
+    };
 
-        const cleanedPhone1 = cleanPhoneNumber(rawPhone1);
-        const cleanedPhone2 = cleanPhoneNumber(rawPhone2);
-        
-        if (!name || !cleanedPhone1 || cart.length === 0) return alert("Fill customer info and add items!");
+    const cleanedPhone1 = cleanPhoneNumber(rawPhone1);
+    const cleanedPhone2 = cleanPhoneNumber(rawPhone2);
+    
+    if (!name || !cleanedPhone1 || cart.length === 0) return alert("Fill customer info and add items!");
 
-        const description = cart.map(item => `${item.name} (${item.qty})`).join(", ");
-        let subtotal = 0;
-        cart.forEach(item => subtotal += (item.price * item.qty));
-        const discount = parseFloat(document.getElementById('discountRate').value) || 0;
-        const finalTotal = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
-
-        const orderData = {
-            order_date: document.getElementById('orderDate').value,
-            waybill_no: document.getElementById('waybillNo').value,
-            order_no: document.getElementById('orderNo')?.value || '', // ඔබට වෙනම order no එකක් තිබේ නම්
-            name: name, // කලින් variable එක
-            address: document.getElementById('outAddress').value,
-            items: description, // Cart items එකතුව
-            phone: cleanedPhone1,
-            phone2: cleanedPhone2,
-            total: finalTotal, // මුළු මුදල (Total)
-            city: document.getElementById('outCity').value,
-            sales_person: document.getElementById('salesPerson').value
-        };
-
-        try {
-            const res = await fetch('/save-order', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(orderData)
-            });
-            if (res.ok) {
-                addOrderToTable();
-                alert("Order Saved Successfully ✅");
-            } else {
-                alert("Database Save Failed ❌");
-            }
-        } catch (error) {
-            alert("Server Error ❌");
+    // Database එක සඳහා "ShortName Qty" ලෙස විස්තරය සකස් කිරීම
+    const shortDescription = cart.map(item => {
+        let displayName = item.name;
+        // නමේ අගට ඇති (Short Name) කොටස පමණක් වෙන් කර ගැනීම (උදා: "Frock (FR)" -> "FR")
+        if (displayName.includes('(') && displayName.includes(')')) {
+            displayName = displayName.split('(')[1].split(')')[0];
         }
+        return `${displayName} ${item.qty}`;
+    }).join(", ");[cite: 1]
+
+    let subtotal = 0;
+    cart.forEach(item => subtotal += (item.price * item.qty));
+    const discount = parseFloat(document.getElementById('discountRate').value) || 0;
+    const finalTotal = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
+
+    const orderData = {
+        order_date: document.getElementById('orderDate').value,
+        waybill_no: document.getElementById('waybillNo').value,
+        order_no: document.getElementById('orderId').value || '', 
+        name: name,
+        address: document.getElementById('outAddress').value,
+        items: shortDescription, // මෙතැනදී Short Name සහ Qty පමණක් Database එකට යවයි
+        phone: cleanedPhone1,
+        phone2: cleanedPhone2,
+        total: finalTotal,
+        city: document.getElementById('outCity').value,
+        sales_person: document.getElementById('salesPerson').value
+    };[cite: 1]
+
+    try {
+        const res = await fetch('/save-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+        });
+        if (res.ok) {
+            // Table එකට add කරන විටත් කෙටි නම පෙන්වීමට shortDescription භාවිතා කරයි
+            addOrderToTable(shortDescription); 
+            alert("Order Saved Successfully ✅");
+        } else {
+            alert("Database Save Failed ❌");
+        }
+    } catch (error) {
+        alert("Server Error ❌");
     }
+}
+    function addOrderToTable(shortDescription) {
+    const name = document.getElementById('outName').value;
+    const phone = document.getElementById('outPhone').value;
+    if (!name || !phone || cart.length === 0) return;
 
-    function addOrderToTable() {
-        const name = document.getElementById('outName').value;
-        const phone = document.getElementById('outPhone').value;
-        if (!name || !phone || cart.length === 0) return alert("Fill customer info and add items!");
+    const tbody = document.getElementById('orderTableBody');
+    if (tbody.rows.length === 1 && tbody.rows[0].cells.length < 5) tbody.innerHTML = '';
 
-        const tbody = document.getElementById('orderTableBody');
-        if (tbody.rows.length === 1 && tbody.rows[0].cells.length < 5) tbody.innerHTML = '';
+    let subtotal = 0;
+    cart.forEach(item => subtotal += (item.price * item.qty));
+    const discount = parseFloat(document.getElementById('discountRate').value) || 0;
+    const finalTotal = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
 
-        const description = cart.map(item => `${item.name} (${item.qty})`).join(", ");
-        let subtotal = 0;
-        cart.forEach(item => subtotal += (item.price * item.qty));
-        const discount = parseFloat(document.getElementById('discountRate').value) || 0;
-        const finalTotal = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
-
-        const row = tbody.insertRow();
-        row.className = "hover:bg-pink-50/30 border-b border-gray-100";
-        row.innerHTML = `
-            <td class="p-3">${tbody.rows.length}</td>
-            <td class="p-3 font-bold">${document.getElementById('waybillNo').value || 'PENDING'}</td>
-            <td class="p-3">${document.getElementById('orderId').value || 'Auto'}</td>
-            <td class="p-3 font-bold">${name}</td>
-            <td class="p-3">${document.getElementById('outAddress').value}</td>
-            <td class="p-3 text-blue-600 font-medium">${description}</td>
-            <td class="p-3">${phone}</td>
-            <td class="p-3">${document.getElementById('outPhone2').value || '-'}</td>
-            <td class="p-3 font-black text-red-600">Rs. ${finalTotal.toFixed(2)}</td>
-            <td class="p-3">${document.getElementById('outCity').value}</td>
-            <td class="p-3 text-center"><button onclick="this.parentElement.parentElement.remove(); updateOrderStats();" class="text-red-500 font-bold">✕</button></td>
-        `;
-        updateOrderStats();
-        clearForm();
-    }
+    const row = tbody.insertRow();
+    row.className = "hover:bg-pink-50/30 border-b border-gray-100";
+    row.innerHTML = `
+        <td class="p-3">${tbody.rows.length}</td>
+        <td class="p-3 font-bold">${document.getElementById('waybillNo').value || 'PENDING'}</td>
+        <td class="p-3">${document.getElementById('orderId').value || 'Auto'}</td>
+        <td class="p-3 font-bold">${name}</td>
+        <td class="p-3">${document.getElementById('outAddress').value}</td>
+        <td class="p-3 text-blue-600 font-medium">${shortDescription}</td> <!-- මෙහි කෙටි නම පෙන්වයි[cite: 1] -->
+        <td class="p-3">${phone}</td>
+        <td class="p-3">${document.getElementById('outPhone2').value || '-'}</td>
+        <td class="p-3 font-black text-red-600">Rs. ${finalTotal.toFixed(2)}</td>
+        <td class="p-3">${document.getElementById('outCity').value}</td>
+        <td class="p-3 text-center"><button onclick="this.parentElement.parentElement.remove(); updateOrderStats();" class="text-red-500 font-bold">✕</button></td>
+    `;
+    updateOrderStats();[cite: 1]
+    clearForm();[cite: 1]
+}
 
     function updateOrderStats() {
         const rows = document.getElementById('orderTableBody').getElementsByTagName('tr');
