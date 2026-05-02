@@ -230,12 +230,25 @@
             <div id="allOrdersView" class="hidden p-4 lg:p-6 space-y-4">
                 <div class="bg-white rounded-xl shadow-sm border border-pink-100 overflow-hidden">
                     <div class="header-bg p-4 flex justify-between items-center">
-                        <h4 class="text-white text-xs font-bold uppercase tracking-widest">📜 All Orders — Database</h4>
-                        <div class="flex gap-2 items-center">
+                        <h4 class="text-white text-xs font-bold uppercase tracking-widest">📜 All Orders</h4>
+
+                        Buttons (Export & Refresh)
+                        <div class="flex items-center gap-2">
                             <div class="relative">
-                                <button onclick="toggleExportDropdown()" class="bg-white text-black text-[10px] px-4 py-1.5 rounded font-bold uppercase flex items-center gap-1 border border-white">
+                                <button class="bg-white text-black px-4 py-2 rounded-lg font-bold text-xs flex flex items-center gap-2 shadow-sm hover:bg-gray-100">
                                     Export ▾
                                 </button>
+                            </div> 
+                            
+                            Refresh Button
+
+                            <button onclick="refreshAllOrders()" class="bg-[#E91E63] hover:bg-[#D81B60] text-white px-4 py-2 rounded-lg font-bold text-xs flex items-center gap-2 shadow-sm transition">
+                <span class="animate-spin-slow">🔄</span> REFRESH
+            </button>
+        </div>
+        
+    </div>
+</div>                            
                                 <div id="exportDropdown" class="hidden absolute right-0 mt-2 w-32 bg-white rounded shadow-xl z-50 py-1 text-black border border-gray-200">
                                     <button onclick="exportData('excel')" class="w-full text-left px-4 py-2 text-[10px] font-bold hover:bg-gray-100 uppercase border-b">1. Excel</button>
                                     <button onclick="exportData('csv')" class="w-full text-left px-4 py-2 text-[10px] font-bold hover:bg-gray-100 uppercase border-b">2. CSV</button>
