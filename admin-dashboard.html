@@ -377,11 +377,11 @@
     async function refreshAllOrders (page = 1) {
         currentPage = page;
         const tbody = document.getElementById('allOrdersTableBody');
-        tbody.innerHTML = '<tr><td colspan="13" class="p-10 text-center animate-pulse">⏳ Loading Page ' + currentPage + ...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="13" class="p-10 text-center animate-pulse">⏳ Loading Page ${currentPage}...</td></tr>';
 
         try {
             
-            const response = await fetch('/get-all-orders?page=${currentPage}`');
+            const response = await fetch(`/get-all-orders?page=${currentPage}`);
             const data = await response.json();
 
             tbody.innerHTML = '';
@@ -418,6 +418,26 @@
         } catch (e) {
             tbody.innerHTML = '<tr><td colspan="8" class="p-10 text-center text-red-500 font-bold">❌ Backend connection failed!</td></tr>';
         }
+    }
+
+    // Pagination බොත්තම් සහ අංක පාලනය කරන Function එක
+    
+    function updatePaginationUI(totalPages) {
+        document.getElementById('pageInfo').innerText = `Page ${currentPage} of ${totalPages}`;
+    
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+            prevBtn.disabled = (currentPage === 1);
+    nextBtn.disabled = (currentPage === totalPages || totalPages === 0);
+    }
+
+    function nextPage() {
+        refreshAllOrders(currentPage + 1);
+    }
+
+    function prevPage() {
+        if (currentPage > 1) refreshAllOrders(currentPage - 1);
     }
 
     // =============================================
