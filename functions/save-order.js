@@ -8,7 +8,7 @@ export async function onRequestPost(context) {
             return new Response(JSON.stringify({ error: "Database Binding (DB) සොයාගත නොහැක!" }), { status: 500 });
         }
 
-        // SQL Query එකේ Headers 12 ක් ඇත (id ස්වයංක්‍රීයව සෑදේ)
+        // ඔබ ලබාදුන් CREATE TABLE එකට අනුව නිවැරදි කළ SQL එක
         await env.DB.prepare(`
             INSERT INTO orders (
                 order_date,
@@ -21,24 +21,20 @@ export async function onRequestPost(context) {
                 phone2,
                 cod_amount,
                 city,
-                sales_person,
-                discount,
-                delivery
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                sales_person
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
-            data.order_date || new Date().toISOString().split('T')[0], // Date
-            data.waybill || "PENDING",                                // Waybill No
-            data.order_no || "N/A",                                   // Order No
-            data.name || "N/A",                                      // Customer Name
-            data.address || "N/A",                                   // Address[cite: 2]
-            data.items || "No Description",                          // Order Description[cite: 2]
-            data.phone || "N/A",                                     // Phone[cite: 2]
-            data.phone2 || "-",                                      // Phone 2[cite: 2]
-            data.total || 0,                                         // COD (Rs.)[cite: 2]
-            data.city || "N/A",                                      // City[cite: 2]
-            data.sales_person || "Admin",                            // Sales Person[cite: 2]
-            data.discount || 0,                                      // Discount
-            data.delivery || 0                                       // Delivery
+            data.order_date || new Date().toISOString().split('T')[0], // order_date
+            data.waybill_no || "PENDING",                             // waybill_no
+            data.order_no || "N/A",                                   // order_no
+            data.name || "N/A",                                      // customer_name
+            data.address || "N/A",                                   // address
+            data.items || "No Description",                          // order_description[cite: 2]
+            data.phone || "N/A",                                     // phone[cite: 2]
+            data.phone2 || "-",                                      // phone2[cite: 2]
+            data.total || 0,                                         // cod_amount[cite: 2]
+            data.city || "N/A",                                      // city[cite: 2]
+            data.sales_person || "Admin"                             // sales_person[cite: 2]
         ).run();
 
         return new Response(JSON.stringify({ success: true }), { 
@@ -47,7 +43,11 @@ export async function onRequestPost(context) {
         });
 
     } catch (err) {
-        return new Response(JSON.stringify({ error: "SQL Error: " + err.message }), { 
+        // ගැටලුවක් ආවොත් ඒක මොකක්ද කියලා හරියටම බලාගන්න[cite: 2]
+        return new Response(JSON.stringify({ 
+            error: "SQL Error", 
+            details: err.message 
+        }), { 
             status: 500,
             headers: { "Content-Type": "application/json" }
         });
