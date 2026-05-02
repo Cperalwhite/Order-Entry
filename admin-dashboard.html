@@ -215,12 +215,16 @@
                                 <tr>
                                     <th class="p-3 border-r border-white/5">#</th>
                                     <th class="p-3 border-r border-white/5">Date</th>
+                                    <th class="p-3 border-r border-white/5">Waybill</th>
                                     <th class="p-3 border-r border-white/5">Name</th>
-                                    <th class="p-3 border-r border-white/5">Phone</th>
+                                    <th class="p-3 border-r border-white/5">Address</th>
                                     <th class="p-3 border-r border-white/5">Items</th>
+                                    <th class="p-3 border-r border-white/5">Phone</th>
+                                    <th class="p-3 border-r border-white/5">Phone 2</th>
                                     <th class="p-3 border-r border-white/5 text-red-400">Total (Rs.)</th>
                                     <th class="p-3 border-r border-white/5">Sales Person</th>
-                                    <th class="p-3">City</th>
+                                    <th class="p-3 border-r border-white/5">City</th>
+                                    <th class="p-3 text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="allOrdersTableBody">
@@ -361,7 +365,7 @@
 
     async function refreshAllOrders() {
         const tbody = document.getElementById('allOrdersTableBody');
-        tbody.innerHTML = '<tr><td colspan="8" class="p-10 text-center text-gray-400 animate-pulse">⏳ Database එකෙන් load වෙනවා...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="12" class="p-10 text-center text-gray-400 animate-pulse">⏳ Database එකෙන් load වෙනවා...</td></tr>';
 
         try {
             const response = await fetch('/get-all-orders');
@@ -378,12 +382,17 @@
                     row.innerHTML = `
                         <td class="p-3 text-gray-400 font-bold">${index + 1}</td>
                         <td class="p-3 font-medium text-gray-600">${order.order_date || 'N/A'}</td>
+                        <td class="p-3 font-bold">${order.waybill || '-'}</td>
                         <td class="p-3 font-black text-gray-800">${order.name || '-'}</td>
+                        <td class="p-3 text-gray-500">${order.address || '-'}</td>
+                        <td class="p-3 text-blue-600">${order.items || '-'}</td>
                         <td class="p-3 text-blue-600 font-semibold">${order.phone || '-'}</td>
-                        <td class="p-3 text-gray-600">${order.items || '-'}</td>
+                        <td class="p-3">${order.phone2 || '-'}</td>
                         <td class="p-3 font-black text-red-600">Rs. ${parseFloat(order.total || 0).toFixed(2)}</td>
                         <td class="p-3 font-bold text-pink-600">${order.sales_person || '-'}</td>
                         <td class="p-3 text-gray-600">${order.city || '-'}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="deleteOrder('${order.id}', this)" class="text-red-500 font-bold">✕</button>
                     `;
                 });
             } else {
@@ -670,37 +679,32 @@
 
     async function saveOrder() {
         const name = document.getElementById('outName').value;
-        const phone = document.getElementById('outPhone').value;
-        let phone2Raw = document.getElementById('outPhone2').value;
+        const rawPhone1 = document.getElementById('outPhone').value;
+        const rawPhone2 = document.getElementById('outPhone2').value;
 
         const cleanPhoneNumber = (phone) => {
-            if (!phone) return "";
-            let cleaned = phone.replace(/\D/g, '');
-
-            if (cleaned.startsWith('94')) {
-                cleaned = cleaned.substring(2);
-            }
-
-            if (cleaned.startsWith('0')) {
-                cleaned = cleaned.substring(1);
-            }
-
+            if (!num) return "";
+            let cleaned = num.replace(/\D/g, '');
+            if (cleaned.startsWith('94')) cleaned = cleaned.substring(2);
+            if (cleaned.startsWith('0')) cleaned = cleaned.substring(1);
             return cleaned;
         };
 
-        const phone = cleanPhoneNumber(phone1Raw);
+        const cleanedPhone1 = cleanPhoneNumber(rawPhone1);
+        const cleanedPhone2 = cleanPhoneNumber(rawPhone2);
         
-        if (!name || !phone || cart.length === 0) return alert("Fill customer info and add items!");
+        if (!name || !cleanedPhone1 || cart.length === 0) return alert("Fill customer info and add items!");
 
-        const description = cart.map(item => `${item.name} (${item.qty})`).join(", ");
+        const description = cart.map(item => `${iallOrdersViewtem.name} (${item.qty})`).join(", ");
         let subtotal = 0;
         cart.forEach(item => subtotal += (item.price * item.qty));
         const discount = parseFloat(document.getElementById('discountRate').value) || 0;
         const finalTotal = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
 
         const orderData = {
-            name, phone,
-            phone2: document.getElementById('outPhone2').value,
+            name, 
+            phone: cleanedPhone1,
+            phone2: cleanedPhone2,
             address: document.getElementById('outAddress').value,
             city: document.getElementById('outCity').value,
             items: description,
