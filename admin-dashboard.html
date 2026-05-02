@@ -671,6 +671,26 @@
     async function saveOrder() {
         const name = document.getElementById('outName').value;
         const phone = document.getElementById('outPhone').value;
+        let phone2Raw = document.getElementById('outPhone2').value;
+
+        const cleanPhoneNumber = (phone) => {
+            if (!phone) return "";
+            let cleaned = phone.replace(/\D/g, '');
+
+            if (cleaned.startsWith('94')) {
+                cleaned = cleaned.substring(2);
+            }
+
+            if (cleaned.startsWith('0')) {
+                cleaned = cleaned.substring(1);
+            }
+
+            return cleaned;
+        };
+
+        const phone = cleanPhoneNumber(phone1Raw);
+        const phone2 = cleanPhoneNumber(phone2Raw);
+        
         if (!name || !phone || cart.length === 0) return alert("Fill customer info and add items!");
 
         const description = cart.map(item => `${item.name} (${item.qty})`).join(", ");
