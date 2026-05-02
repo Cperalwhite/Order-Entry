@@ -19,6 +19,12 @@
         .side-nav-item.active { color: #C08497 !important; border-left-color: #C08497; background: rgba(192,132,151,0.08); }
         .section-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.2); padding: 14px 16px 5px; }
     </style>
+
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css">
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>    
 </head>
 <body class="bg-[#FDF8F8] font-sans">
 
@@ -203,8 +209,7 @@
             </div>
 
             <!-- ALL ORDERS VIEW (database එකෙන් load වෙන) -->
-            <input type="text" id="orderSearchInput" onkeyup="searchOrders()" placeholder="Search by name or phone..." class="p-2 border rounded mb-2 text-xs w-full max-w-md">
-
+            
             <div class="flex gap-2 items-end mb-4">
     <!-- පවතින Search Bar එක -->
     <div class="flex-1">
@@ -221,7 +226,7 @@
         </div>
     </div>
 </div>
-            
+                   
             <div id="allOrdersView" class="hidden p-4 lg:p-6 space-y-4">
                 <div class="bg-white rounded-xl shadow-sm border border-pink-100 overflow-hidden">
                     <div class="header-bg p-4 flex justify-between items-center">
