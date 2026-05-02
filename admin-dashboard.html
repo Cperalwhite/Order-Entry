@@ -704,16 +704,17 @@
         const finalTotal = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
 
         const orderData = {
-            name, 
+            order_date: document.getElementById('orderDate').value,
+            waybill_no: document.getElementById('waybillNo').value,
+            order_no: document.getElementById('orderNo')?.value || '', // ඔබට වෙනම order no එකක් තිබේ නම්
+            customer_name: name, // කලින් variable එක
+            address: document.getElementById('outAddress').value,
+            order_description: description, // Cart items එකතුව
             phone: cleanedPhone1,
             phone2: cleanedPhone2,
-            address: document.getElementById('outAddress').value,
+            cod_amount: finalTotal, // මුළු මුදල (Total)
             city: document.getElementById('outCity').value,
-            items: description,
-            total: finalTotal,
-            discount, delivery: deliveryCharge,
-            sales_person: document.getElementById('salesPerson').value,
-            order_date: document.getElementById('orderDate').value
+            sales_person: document.getElementById('salesPerson').value
         };
 
         try {
