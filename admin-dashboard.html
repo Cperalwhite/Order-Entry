@@ -495,13 +495,23 @@
     }
 
     function addToCartFromSearch() {
-        const name = document.getElementById('productSearch').value;
-        const price = parseFloat(document.getElementById('customPrice').value);
-        const qty = parseFloat(document.getElementById('prodQty').value);
+        
+        const searchInput = document.getElementById('productSearch');
+        const priceInput = document.getElementById('customPrice');
+        const qtyInput = document.getElementById('prodQty');
+        
+        const name = searchInput.value;
+        const price = parseFloat(priceInput.value);
+        const qty = parseFloat(qtyInput.value);
+        
         if (!name || isNaN(price)) return alert("Select product!");
         cart.push({ name, price, qty });
         renderCart();
         updatePreview();
+
+        searchInput.value = '';
+        priceInput.value = '';
+        searchInput.focus();
     }
 
     function removeFromCart(index) {
