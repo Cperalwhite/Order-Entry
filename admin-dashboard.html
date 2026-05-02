@@ -203,6 +203,8 @@
             </div>
 
             <!-- ALL ORDERS VIEW (database එකෙන් load වෙන) -->
+            <input type="text" id="orderSearchInput" onkeyup="searchOrders()" placeholder="Search by name or phone..." class="p-2 border rounded mb-2 text-xs w-full max-w-md">
+            
             <div id="allOrdersView" class="hidden p-4 lg:p-6 space-y-4">
                 <div class="bg-white rounded-xl shadow-sm border border-pink-100 overflow-hidden">
                     <div class="header-bg p-4 flex justify-between items-center">
@@ -795,6 +797,16 @@
         document.getElementById('orderTableBody').innerHTML = '<tr><td colspan="11" class="p-10 text-center text-gray-300 italic">No orders added to preview.</td></tr>';
         updateOrderStats();
     }
+
+    function searchOrders() {
+    let input = document.getElementById("orderSearchInput").value.toLowerCase();
+    let rows = document.getElementById("allOrdersTableBody").getElementsByTagName("tr");
+    for (let row of rows) {
+        let name = row.cells[4]?.innerText.toLowerCase() || "";
+        let phone = row.cells[7]?.innerText.toLowerCase() || "";
+        row.style.display = (name.includes(input) || phone.includes(input)) ? "" : "none";
+    }
+}
 
     async function deleteOrder(id, btn) {
     if (!confirm("මෙම Order එක අනිවාර්යයෙන්ම මකා දැමිය යුතුද?")) return;
