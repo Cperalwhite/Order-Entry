@@ -242,6 +242,12 @@
     </div>
 </div>
 
+    <div class="flex justify-between items-center p-4 bg-white border-t">
+    <button onclick="prevPage()" id="prevBtn" class="bg-gray-200 px-4 py-2 rounded text-xs font-bold hover:bg-gray-300 disabled:opacity-50">Previous</button>
+    <span id="pageInfo" class="text-xs font-bold text-gray-500">Page 1</span>
+    <button onclick="nextPage()" id="nextBtn" class="bg-gray-200 px-4 py-2 rounded text-xs font-bold hover:bg-gray-300 disabled:opacity-50">Next</button>
+</div>
+
 <!-- SETTINGS MODAL -->
 <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
     <div class="bg-white w-full max-w-4xl h-[500px] rounded-xl shadow-2xl flex overflow-hidden border">
@@ -366,23 +372,31 @@
     // DATABASE — All Orders Fetch
     // =============================================
 
-    async function refreshAllOrders() {
+    let currentPage = 1;
+    
+    async function refreshAllOrders (page = 1) {
+        currentPage = page;
         const tbody = document.getElementById('allOrdersTableBody');
-        tbody.innerHTML = '<tr><td colspan="13" class="p-10 text-center text-gray-400 animate-pulse">⏳ Database එකෙන් load වෙනවා...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="13" class="p-10 text-center animate-pulse">⏳ Loading Page ' + currentPage + ...</td></tr>';
 
         try {
-            const response = await fetch('/get-all-orders');
-            if (response.ok) {
-                const orders = await response.json();
-                tbody.innerHTML = '';
-                if (orders.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="8" class="p-10 text-center text-gray-400 italic">Database එකේ orders නෑ.</td></tr>';
-                    return;
-                }
-                orders.forEach((order, index) => {
-                    const row = tbody.insertRow();
-                    row.className = "hover:bg-pink-50/40 border-b border-gray-100";
-                    row.innerHTML = `
+            
+            const response = await fetch('/get-all-orders?page=${currentPage}`');
+            const data = await response.json();
+
+            tbody.innerHTML = '';
+            if (!data.orders || data.orders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="13" class="p-10 text-center">No orders found.</td></tr>';
+                return;
+            }
+
+            data.orders.forEach((order, index) => {
+                const row = tbody.insertRow();
+                row.className = "hover:bg-pink-50/40 border-b border-gray-100";
+
+                const displayIndex = ((currentPage - 1) * 50) + index + 1;
+            
+                row.innerHTML = `
                         <td class="p-3 text-gray-400 font-bold">${index + 1}</td>
                         <td class="p-3 font-medium text-gray-600">${order.order_date || 'N/A'}</td>
                         <td class="p-3 font-bold">${order.waybill_no || '-'}</td>
@@ -399,9 +413,8 @@
                             <button onclick="deleteOrder('${order.id}', this)" class="text-red-500 font-bold">✕</button>
                     `;
                 });
-            } else {
-                tbody.innerHTML = '<tr><td colspan="8" class="p-10 text-center text-red-500 font-bold">❌ Server Error!</td></tr>';
-            }
+                updatePaginationUI(data.totalPages);
+            
         } catch (e) {
             tbody.innerHTML = '<tr><td colspan="8" class="p-10 text-center text-red-500 font-bold">❌ Backend connection failed!</td></tr>';
         }
