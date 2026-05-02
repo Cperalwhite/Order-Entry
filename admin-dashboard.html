@@ -384,14 +384,15 @@
                         <td class="p-3 text-gray-400 font-bold">${index + 1}</td>
                         <td class="p-3 font-medium text-gray-600">${order.order_date || 'N/A'}</td>
                         <td class="p-3 font-bold">${order.waybill || '-'}</td>
+                        <td class="p-3 font-bold">${order.order_no || '-'}</td>
                         <td class="p-3 font-black text-gray-800">${order.name || '-'}</td>
                         <td class="p-3 text-gray-500">${order.address || '-'}</td>
                         <td class="p-3 text-blue-600">${order.items || '-'}</td>
                         <td class="p-3 text-blue-600 font-semibold">${order.phone || '-'}</td>
                         <td class="p-3">${order.phone2 || '-'}</td>
-                        <td class="p-3 font-black text-red-600">Rs. ${parseFloat(order.total || 0).toFixed(2)}</td>
-                        <td class="p-3 font-bold text-pink-600">${order.sales_person || '-'}</td>
+                        <td class="p-3 font-black text-red-600">Rs. ${parseFloat(order.cod || 0).toFixed(2)}</td>
                         <td class="p-3 text-gray-600">${order.city || '-'}</td>
+                         <td class="p-3 font-bold text-pink-600">${order.sales_person || '-'}</td>
                         <td class="p-3 text-center">
                             <button onclick="deleteOrder('${order.id}', this)" class="text-red-500 font-bold">✕</button>
                     `;
