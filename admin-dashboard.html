@@ -459,7 +459,7 @@
                         <td class="p-3 text-gray-500">${order.address || '-'}</td>
                         <td class="p-3 text-blue-600">${order.order_description || '-'}</td>
                         <td class="p-3 text-blue-600 font-semibold">${order.phone || '-'}</td>
-                        <td class="p-3">${order.phone2 || '-'}</td>
+                        <td class="p-3">${order.phone2 || ''}</td>
                         <td class="p-3 font-black text-red-600">Rs. ${parseFloat(order.cod_amount || 0).toFixed(2)}</td>
                         <td class="p-3 text-gray-600">${order.city || '-'}</td>
                          <td class="p-3 font-bold text-pink-600">${order.sales_person || '-'}</td>
