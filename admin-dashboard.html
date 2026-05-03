@@ -806,8 +806,12 @@
         phone2: cleanedPhone2,
         total: finalTotal,
         city: document.getElementById('outCity').value,
-        sales_person: document.getElementById('salesPerson').value
-    };
+        sales_person: (function() {
+        const fullName = document.getElementById('salesPerson').value;
+        const person = settingsData.salesPersons.find(s => s.name === fullName);
+        return person ? person.short : fullName;
+    })()
+};
 
     try {
         const res = await fetch('/save-order', {
