@@ -145,7 +145,7 @@
                         <div class="text-[10px] text-gray-400 uppercase font-bold">Sales Person</div>
                     </div>
                     <div class="bg-white p-4 rounded-lg stat-card border-blue-500 shadow-sm">
-                        <button class="bg-[#22C55E] text-white w-full h-full rounded font-bold text-xs">EXPORT EXCEL</button>
+                        <button onclick="exportData('xlsx')" class="bg-[#22C55E] text-white w-full h-full rounded font-bold text-xs hover:bg-green-600 transition">EXPORT EXCEL</button>
                     </div>
                 </div>
 
@@ -942,36 +942,38 @@ function toggleExportMenu() {
     }
 }
 
-// Export function එක (Format එක අනුව)
-function exportData(format) {
-    console.log("Exporting as:", format);
-    document.getElementById('exportMenu').classList.add('hidden');
-    
-    // මෙහිදී ඔබේ Backend එකට අදාළ format එක යවා file එක download කරගැනීමට කේතය ලියන්න
-    // උදාහරණ: window.location.href = `/export-orders?format=${format}`;
-    
-    alert(`${format.toUpperCase()} export ආරම්භ විය!`);
-}
-
-    async function deleteOrder(id, btn) {
-    if (!confirm("මෙම Order එක අනිවාර්යයෙන්ම මකා දැමිය යුතුද?")) return;
-
+async function exportData(format) {
     try {
-        const res = await fetch(`/delete-order?id=${id}`, {
-            method: 'DELETE'
-        });
+        // Dropdown එක තිබේ නම් වසා දමන්න
+        const menu = document.getElementById('exportMenu');
+        if(menu) menu.classList.add('hidden');
+        
+        // Backend එකට request එක යැවීම (මෙය ඔබගේ /functions/export-orders.js එකට සම්බන්ධ වේ)
+        const response = await fetch(`/export-orders?format=${format}`);
 
-        if (res.ok) {
-            // Table එකෙන් එම පේළිය ඉවත් කිරීම
-            btn.closest('tr').remove();
-            alert("Order Deleted Successfully ✅");
-            // දත්ත සංඛ්‍යාලේඛන Update කිරීම
-            if (typeof updateOrderStats === 'function') updateOrderStats();
-        } else {
-            alert("Delete Failed ❌");
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText);
         }
-    } catch (error) {
-        alert("Server Error ❌");
+
+        // ලැබෙන දත්ත File එකක් (Blob) ලෙස ලබා ගැනීම
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        
+        // Browser එකේ download එකක් trigger කිරීම
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `C_Pearl_Orders_${new Date().toLocaleDateString()}.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        
+        // පිරිසිදු කිරීම
+        window.URL.revokeObjectURL(url);
+        a.remove();
+
+    } catch (err) {
+        console.error('Export Error:', err);
+        alert("Export failed: " + err.message);
     }
 }
 </script>
