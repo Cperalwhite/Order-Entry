@@ -569,10 +569,16 @@
             description += ` (${remark})`;
         }
         cart.forEach(item => subtotal += (item.price * item.qty));
-
         const discount = parseFloat(document.getElementById('discountRate').value) || 0;
-        const final = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
 
+        const zeroCodRemarks = ["Missing", "Deposit", "Exchange", "Damage"];
+        let final;
+        if (zeroCodRemarks.includes(remark)) {
+            final = 0;
+        } else {
+            final = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
+        }
+        
         if (cart.length > 0) {
             tbody.innerHTML = `
                 <tr class="hover:bg-pink-50/30">
@@ -613,8 +619,13 @@
             itemsList += `• ${item.name} x${item.qty}\n`;
         });
 
-        const final = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
-
+        const zeroCodRemarks = ["Missing", "Deposit", "Exchange", "Damage"];
+        let final;
+        if (zeroCodRemarks.includes(remark)) {
+            final = 0;
+        } else {
+            final = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
+        }
         let msg = `🌸 *C Pearl White - Order* 🌸\n`;
         msg += `👤 Name: ${name}\n`;
         msg += `📱 Phone: ${phone}\n`;
