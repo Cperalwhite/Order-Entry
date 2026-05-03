@@ -828,11 +828,17 @@
     if (remark) {
         shortDescription += ` (${remark})`;
     }
+
         
     let subtotal = 0;
     cart.forEach(item => subtotal += (item.price * item.qty));
     const discount = parseFloat(document.getElementById('discountRate').value) || 0;
-    const finalTotal = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
+    let finalTotal = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
+
+    const zeroCodRemarks = ["Missing", "Deposit", "Exchange", "Damage"];
+    if (zeroCodRemarks.includes(remark)) {
+        finalTotal = 0;
+    }
 
     const orderData = {
         order_date: document.getElementById('orderDate').value,
