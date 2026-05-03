@@ -822,7 +822,7 @@
         if (displayName.includes('(') && displayName.includes(')')) {
             displayName = displayName.split('(')[1].split(')')[0];
         }
-        return `${displayName} ${item.qty}`;
+        return item.qty > 1 ? `${displayName} ${item.qty}`: `${displayName}`;
     }).join(" / ");
 
     if (remark) {
