@@ -892,6 +892,7 @@
 
     function clearTable() {
         document.getElementById('orderTableBody').innerHTML = '<tr><td colspan="11" class="p-10 text-center text-gray-300 italic">No orders added to preview.</td></tr>';
+        document.getElementById('waPreview').value = '';
         updateOrderStats();
     }
 
