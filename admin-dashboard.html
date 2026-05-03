@@ -1048,6 +1048,21 @@ async function deleteOrder(id, btn) {
         alert("Server Error ❌");
     }
 } 
+
+function selectCurrentLine(textarea) {
+    const text = textarea.value;
+    const startPos = textarea.selectionStart;
+    
+    // ක්ලික් කළ තැනට පෙර ඇති පේළියේ ආරම්භය සොයා ගැනීම
+    const start = text.lastIndexOf('\n', startPos - 1) + 1;
+    
+    // ක්ලික් කළ තැනට පසුව ඇති පේළියේ අවසානය සොයා ගැනීම
+    let end = text.indexOf('\n', startPos);
+    if (end === -1) end = text.length;
+
+    // එම පේළිය පමණක් Highlight කිරීම
+    textarea.setSelectionRange(start, end);
+}  
 </script>
 </body>
 </html>
