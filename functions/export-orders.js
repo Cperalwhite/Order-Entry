@@ -25,6 +25,7 @@ export async function onRequestGet(context) {
             "COD (Rs.)": order.cod_amount,
             "City": order.city,
             "Sales Person": order.sales_person
+        };
     });
        
     const worksheet = XLSX.utils.json_to_sheet(formattedResults); 
