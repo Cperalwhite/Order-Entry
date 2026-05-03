@@ -31,7 +31,7 @@ export async function onRequestPost(context) {
             data.address || "N/A",                                   // address
             data.items || "No Description",                          // order_description[cite: 2]
             data.phone || "N/A",                                     // phone[cite: 2]
-            data.phone2 || "-",                                      // phone2[cite: 2]
+            data.phone2 || ",                                      // phone2[cite: 2]
             data.total || 0,                                         // cod_amount[cite: 2]
             data.city || "N/A",                                      // city[cite: 2]
             data.sales_person || "Admin"                             // sales_person[cite: 2]
