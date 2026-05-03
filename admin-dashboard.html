@@ -563,7 +563,11 @@
         const orderId = document.getElementById('orderId').value || "Auto";
 
         let subtotal = 0;
+        const remark = document.getElementById('orderRemark').value;
         let description = cart.map(item => `${item.name} (${item.qty})`).join(" / ");
+        if (remark) {
+            description += ` (${remark})`;
+        }
         cart.forEach(item => subtotal += (item.price * item.qty));
 
         const discount = parseFloat(document.getElementById('discountRate').value) || 0;
