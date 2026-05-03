@@ -215,24 +215,23 @@
 
             <!-- ALL ORDERS VIEW (database එකෙන් load වෙන) -->
             
-            <div class="flex gap-2 items-end mb-4">
-    <!-- පවතින Search Bar එක -->
-    <div class="flex-1">
-        <label class="input-label">Search Orders</label>
-        <input type="text" id="orderSearchInput" onkeyup="searchOrders()" placeholder="Search by name or phone..." class="w-full p-2 border rounded text-xs h-10">
-    </div>
-
-    <!-- අලුත් Date Picker එක -->
-    <div class="w-64 relative">
-        <label class="input-label">Filter by Date</label>
-        <div class="relative">
-            <input type="text" id="dateFilter" placeholder="Select Date Range" class="w-full p-2 border rounded text-xs h-10 bg-white pr-10 cursor-pointer">
-            <span class="absolute right-3 top-2.5 text-gray-400">📅</span>
-        </div>
-    </div>
-</div>
-                   
+            <div class="flex gap-2 items-end mb-4">                
             <div id="allOrdersView" class="hidden p-4 lg:p-6 space-y-4">
+               
+                <div class="flex-1">
+                    <label class="input-label">Search Orders</label>
+                    <input type="text" id="orderSearchInput" onkeyup="searchOrders()" placeholder="Search by name or phone..." class="w-full p-2 border rounded text-xs h-10">
+                </div>
+            
+                <div class="w-64 relative">
+                    <label class="input-label">Filter by Date</label>
+                    <div class="relative">
+                        <input type="text" id="dateFilter" placeholder="Select Date Range" class="w-full p-2 border rounded text-xs h-10 bg-white pr-10 cursor-pointer">
+                        <span class="absolute right-3 top-2.5 text-gray-400">📅</span>
+                    </div>
+                </div>
+            </div>
+                
                 <div class="bg-white rounded-xl shadow-sm border border-pink-100 overflow-hidden">
                     <div class="header-bg p-4 flex justify-between items-center">
                         <h4 class="text-white text-xs font-bold uppercase tracking-widest">📜 All Orders — Database</h4>
