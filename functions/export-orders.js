@@ -25,6 +25,7 @@ export async function onRequestGet(context) {
                 "Address": order.address,
                 "Description": order.order_description,
                 "Phone": order.phone,
+                "Phone 2": order.phone2,
                 "COD (Rs.)": order.cod_amount,
                 "City": order.city,
                 "Sales Person": order.sales_person
