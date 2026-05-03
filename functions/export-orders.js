@@ -9,6 +9,26 @@ export async function onRequestGet(context) {
         // D1 Database එකෙන් දත්ත ලබා ගැනීම
         const { results } = await env.DB.prepare("SELECT * FROM orders ORDER BY id DESC").all();
 
+        // Database එකෙන් එන results එක අලුත් අනුක අංකයක් සහිතව සකස් කිරීම
+        const formattedResults = results.map((order, index) => {
+            return {
+        "No": index + 1, // 1, 2, 3 ලෙස පිළිවෙළට අංක ලබා දෙයි
+        "Date": order.order_date,
+        "Waybill No": order.waybill_no,
+        "Order No": order.order_no,
+        "Customer Name": order.customer_name,
+        "Address": order.address,
+        "Description": order.order_description,
+        "Phone": order.phone,
+        "COD (Rs.)": order.cod_amount,
+        "City": order.city,
+        "Sales Person": order.sales_person
+    };
+});
+
+// දැන් "results" වෙනුවට "formattedResults" පාවිච්චි කරන්න
+const worksheet = XLSX.utils.json_to_sheet(formattedResults); 
+    
         if (!results || results.length === 0) {
             return new Response("No data to export", { status: 400 });
         }
