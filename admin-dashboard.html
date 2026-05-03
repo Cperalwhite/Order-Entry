@@ -137,10 +137,16 @@
                 </h4>
             </div>                
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                    <div class="bg-white p-4 rounded-lg stat-card border-pink-500 shadow-sm">
-                        <div id="orderCount" class="text-2xl font-black">0</div>
-                        <div class="text-[10px] text-gray-400 uppercase font-bold">Orders</div>
-                    </div>
+                    <div class="bg-white p-3 rounded-xl shadow-sm border-pink-100 flex items-center justify-between h-20 transition hover:shadow-md">
+                        <div>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider leading-tight">Orders</p>
+                            <h3 id="orderCount" class="text-lg font-black text-gray-800">0</h3> 
+                        </div>
+                        <div class="bg-pink-50 p-2 rounded-lg">
+                            <span class="text-lg">📦</span>    
+                        </div>
+                    </div>    
+                    
                     <div class="bg-white p-4 rounded-lg stat-card border-yellow-500 shadow-sm">
                         <div class="text-2xl font-black text-blue-700">Rs. <span id="finalPriceDisplay">0</span></div>
                         <div class="text-[10px] text-gray-400 uppercase font-bold">Total COD</div>
