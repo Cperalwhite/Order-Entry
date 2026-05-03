@@ -806,7 +806,7 @@
 
     // Database සහ Table එක සඳහා කෙටි විස්තරය (Short Name + Qty) සකස් කිරීම
     const remark = document.getElementById('orderRemark').value;
-    const shortDescription = cart.map(item => {
+    let shortDescription = cart.map(item => {
         let displayName = item.name;
         if (displayName.includes('(') && displayName.includes(')')) {
             displayName = displayName.split('(')[1].split(')')[0];
