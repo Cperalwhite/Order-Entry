@@ -942,27 +942,6 @@ function toggleExportMenu() {
     }
 }
 
-    async function deleteOrder(id, btn) {
-    if (!confirm("මෙම Order එක අනිවාර්යයෙන්ම මකා දැමිය යුතුද?")) return;
-
-    try {
-        const res = await fetch(`/delete-order?id=${id}`, {
-            method: 'DELETE'
-        });
-
-        if (res.ok) {
-            // Table එකෙන් එම පේළිය ඉවත් කිරීම
-            btn.closest('tr').remove();
-            alert("Order Deleted Successfully ✅");
-            // දත්ත සංඛ්‍යාලේඛන Update කිරීම
-            if (typeof updateOrderStats === 'function') updateOrderStats();
-        } else {
-            alert("Delete Failed ❌");
-        }
-    } catch (error) {
-        alert("Server Error ❌");
-    }
-
 async function exportData(format) {
     try {
         // Dropdown එක තිබේ නම් වසා දමන්න
