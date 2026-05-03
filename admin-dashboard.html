@@ -125,7 +125,7 @@
 
                     <div class="mt-3">
                         <span class="input-label">📝 Remark</span>
-                        <input type="text" id="orderRemark" list="remarkOptions" placeholder="Select or Type Remark..." class="w-full p-2 border rounded text-xs font-semibold">
+                        <input type="text" id="orderRemark" list="remarkOptions" oninput="updatePreview()" placeholder="Select or Type Remark..." class="w-full p-2 border rounded text-xs font-semibold">
 
                         <datalist id="remarkOptions">
                             <option value="Deposit">Deposit</option>
@@ -600,6 +600,7 @@
         const address = document.getElementById('outAddress').value || "...";
         const phone = document.getElementById('outPhone').value || "...";
         const discount = parseFloat(document.getElementById('discountRate').value) || 0;
+        const remark = document.getElementById('orderRemark').value;
 
         let subtotal = 0;
         let itemsList = "";
@@ -615,6 +616,9 @@
         msg += `📱 Phone: ${phone}\n`;
         msg += `📍 Address: ${address}\n\n`;
         msg += `📦 Items:\n${itemsList || "None"}\n`;
+        if (remark) {
+        msg += `📝 Remark: ${remark}\n`;
+    }
         msg += `💰 *TOTAL COD: Rs. ${final.toFixed(2)}*`;
 
         document.getElementById('waPreview').value = msg;
