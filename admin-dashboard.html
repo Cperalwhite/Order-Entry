@@ -1132,12 +1132,15 @@ function selectCurrentLine(textarea) {
 
 function toggleFilterSidebar() {
         const sidebar = document.getElementById('filterSidebar');
+        const overlay = document.getElementById('filterOverlay');
         sidebar.classList.toggle('open');
+        if(overlay) overlay.classList.toggle('show');
         
         // Sales person dropdown එක filter sidebar එකටත් fill කිරීම
-        const sideSelect = document.getElementById('filterSalesPerson');
+        const sideSelect = document.getElementById('fSales');
         if (sideSelect.options.length <= 1) {
-            settingsData.salesPersons.forEach(s => {
+            if (settingsData && settingsData.salesPersons) {
+                settingsData.salesPersons.forEach(s => {
                 let opt = document.createElement('option');
                 opt.value = s.short;
                 opt.text = s.name;
