@@ -1150,45 +1150,81 @@ function toggleFilterSidebar() {
     }
 
     function clearFilters() {
-        document.getElementById('filterDate').value = '';
-        document.getElementById('filterCustName').value = '';
-        document.getElementById('filterMobile').value = '';
-        document.getElementById('filterAddress').value = '';
-        document.getElementById('filterSalesPerson').value = '';
+        document.getElementById('fDate').value = '';
+        document.getElementById('fCustName').value = '';
+        document.getElementById('fMobile').value = '';
+        document.getElementById('fAddress').value = '';
+        document.getElementById('fSales').value = '';
     }
 
-    async function applyAdvancedFilter() {
-        const date = document.getElementById('filterDate').value;
-        const name = document.getElementById('filterCustName').value.toLowerCase();
-        const mobile = document.getElementById('filterMobile').value;
-        const address = document.getElementById('filterAddress').value.toLowerCase();
-        const sales = document.getElementById('filterSalesPerson').value;
+    async function applySideFilters(page = 1) {
+    currentPage = page;
+    
+    // HTML Elements වලින් අගයන් ලබා ගැනීම
+    const date = document.getElementById('fDate').value;
+    const name = document.getElementById('fCustName') ? document.getElementById('fCustName').value : ""; 
+    const mobile = document.getElementById('fMobile').value;
+    const address = document.getElementById('fAddress') ? document.getElementById('fAddress').value : "";
+    const sales = document.getElementById('fSales').value;
 
-        // දැනට පවතින Table එකේ rows filter කිරීම (Client-side filtering)
-        let rows = document.getElementById("allOrdersTableBody").getElementsByTagName("tr");
+    const tbody = document.getElementById('allOrdersTableBody');
+    tbody.innerHTML = '<tr><td colspan="13" class="p-10 text-center animate-pulse text-gray-500 font-bold">⏳ Searching across all pages...</td></tr>';
+
+    try {
+        // Backend එකට යවන URL එක සැකසීම
+        // මෙහි addr වෙනුවට address ලෙස නිවැරදි කර ඇත
+        let url = `/get-all-orders?page=${currentPage}&limit=50&date=${encodeURIComponent(date)}&name=${encodeURIComponent(name)}&mobile=${encodeURIComponent(mobile)}&address=${encodeURIComponent(address)}&sales=${encodeURIComponent(sales)}`;
+
+        const response = await fetch(url);
         
-        for (let row of rows) {
-            if (row.cells.length < 5) continue;
-            
-            let rowDate = row.cells[1].innerText;
-            let rowName = row.cells[4].innerText.toLowerCase();
-            let rowAddress = row.cells[5].innerText.toLowerCase();
-            let rowMobile = row.cells[7].innerText;
-            let rowSales = row.cells[11].innerText;
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const data = await response.json();
 
-            let matches = 
-                (!date || rowDate.includes(date)) &&
-                (!name || rowName.includes(name)) &&
-                (!mobile || rowMobile.includes(mobile)) &&
-                (!address || rowAddress.includes(address)) &&
-                (!sales || rowSales === sales);
+        tbody.innerHTML = '';
+        
+        if (!data.orders || data.orders.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="13" class="p-10 text-center text-gray-400">No orders found matching these filters.</td></tr>';
+            if (typeof updatePaginationUI === 'function') updatePaginationUI(0);
+            return;
+        }
 
-            row.style.display = matches ? "" : "none";
+        // Table එකට දත්ත ඇතුළත් කිරීම
+        data.orders.forEach((order, index) => {
+            const row = tbody.insertRow();
+            row.className = "hover:bg-pink-50/40 border-b border-gray-100 text-[12px]";
+            row.innerHTML = `
+                <td class="p-3 text-gray-400 font-bold">${((currentPage - 1) * 50) + index + 1}</td>
+                <td class="p-3 font-medium text-gray-600">${order.order_date || 'N/A'}</td>
+                <td class="p-3 font-bold">${order.waybill_no || '-'}</td>
+                <td class="p-3 font-bold">${order.order_no || '-'}</td>
+                <td class="p-3 font-black text-gray-800 uppercase">${order.customer_name || '-'}</td>
+                <td class="p-3 text-gray-500">${order.address || '-'}</td>
+                <td class="p-3 text-blue-600">${order.order_description || '-'}</td>
+                <td class="p-3 text-blue-600 font-semibold">${order.phone || '-'}</td>
+                <td class="p-3">${order.phone2 || ''}</td>
+                <td class="p-3 font-black text-red-600">Rs. ${parseFloat(order.cod_amount || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                <td class="p-3 text-gray-600">${order.city || '-'}</td>
+                <td class="p-3 font-bold text-pink-600">${order.sales_person || '-'}</td>
+                <td class="p-3 text-center">
+                    <button onclick="deleteOrder('${order.id}', this)" class="text-red-500 hover:bg-red-50 p-1 rounded transition font-bold">✕</button>
+                </td>
+            `;
+        });
+
+        // Pagination එක update කිරීම
+        if (typeof updatePaginationUI === 'function') {
+            updatePaginationUI(data.totalPages);
         }
         
-        // Filter කළ පසු sidebar එක වසා දමන්න
-        // toggleFilterSidebar(); 
-    }    
+        // Filter කළ පසු Sidebar එක වසා දැමීමට අවශ්‍ය නම් පහත පේළිය active කරන්න
+        // toggleFilterSidebar();
+
+    } catch (e) {
+        console.error("Filter Error:", e);
+        tbody.innerHTML = '<tr><td colspan="13" class="p-10 text-center text-red-500 font-bold">❌ Error connecting to database. Please check backend.</td></tr>';
+    }
+}    
 </script>
 </body>
 </html>
