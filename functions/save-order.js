@@ -24,17 +24,17 @@ export async function onRequestPost(context) {
                 sales_person
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
-            data.order_date || new Date().toISOString().split('T')[0], // order_date
-            data.waybill_no || "PENDING",                             // waybill_no
-            data.order_no || "N/A",                                   // order_no
-            data.name || "N/A",                                      // customer_name
-            data.address || "N/A",                                   // address
-            data.items || "No Description",                          // order_description[cite: 2]
-            data.phone || "N/A",                                     // phone[cite: 2]
-            data.phone2 || "",                                      // phone2[cite: 2]
-            data.total || 0,                                         // cod_amount[cite: 2]
-            data.city || "N/A",                                      // city[cite: 2]
-            data.sales_person || "Admin"                             // sales_person[cite: 2]
+            data.order_date || new Date().toISOString().split('T')[0], 
+            data.waybill_no || "PENDING",                             
+            data.order_no || "N/A",                                   
+            data.name || "N/A",                                      
+            data.address || "N/A",                                   
+            data.items || "No Description",                          
+            data.phone || "N/A",                                     
+            data.phone2 || "",                                     
+            data.total || 0,                                         
+            data.city || "N/A",                                     
+            data.sales_person || "Admin"                             
         ).run();
 
         return new Response(JSON.stringify({ success: true }), { 
