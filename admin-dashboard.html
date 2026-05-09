@@ -18,6 +18,26 @@
         .side-nav-item:hover { color: rgba(255,255,255,0.85) !important; background: rgba(255,255,255,0.05); }
         .side-nav-item.active { color: #C08497 !important; border-left-color: #C08497; background: rgba(192,132,151,0.08); }
         .section-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.2); padding: 14px 16px 5px; }
+
+        /* Filter Sidebar Styles */
+            #filterSidebar {
+                transition: transform 0.3s ease-in-out;
+                transform: translateX(100%);
+            }
+            #filterSidebar.open {
+                transform: translateX(0);
+            }
+            .filter-input-group {
+                margin-bottom: 15px;
+            }
+            .filter-input-group label {
+                font-size: 11px;
+                font-weight: bold;
+                color: #4b5563;
+                display: block;
+                margin-bottom: 4px;
+                text-transform: uppercase;
+            }   
     </style>
 
     <!-- Flatpickr CSS -->
@@ -264,8 +284,54 @@
                             <button onclick="refreshAllOrders()" class="bg-pink-500 text-white text-[10px] px-4 py-1.5 rounded font-bold uppercase transition hover:bg-pink-400">
                                 🔄 Refresh
                             </button>
-                        </div>
+                            <button onclick="toggleFilterSidebar()" class="bg-red-500 text-white p-2 rounded shadow hover:bg-red-600 transition flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 8.293A1 1 0 013 7.586V4z" />
+                                </svg>
+                            </button>                            
                     </div>
+
+                    <div id="filterSidebar" class="fixed top-0 right-0 h-full w-[320px] bg-white shadow-2xl border-l flex flex-col">
+                        <div class="p-4 border-b flex justify-between items-center bg-gray-50">
+                            <h3 class="text-sm font-black uppercase text-gray-700 tracking-tight">Advanced Search</h3>
+                            <button onclick="toggleFilterSidebar()" class="text-red-500 hover:bg-red-50 font-bold p-1 rounded-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="p-5 flex-1 overflow-y-auto space-y-4 text-xs">
+                            <div>
+                                <label class="input-label !text-gray-600">Order Date</label>
+                                <input type="date" id="filterDate" class="w-full border rounded p-2 focus:ring-2 focus:ring-pink-200 outline-none">
+                            </div>
+                            <div>
+                                <label class="input-label !text-gray-600">Customer Name</label>
+                                <input type="text" id="filterCustName" placeholder="Enter name..." class="w-full border rounded p-2">
+                            </div>
+                            <div>
+                                <label class="input-label !text-gray-600">Mobile No</label>
+                                <input type="text" id="filterMobile" placeholder="07x xxxxxxx" class="w-full border rounded p-2">
+                            </div>
+                            <div>
+                                <label class="input-label !text-gray-600">Address</label>
+                                <textarea id="filterAddress" rows="2" placeholder="Street, City..." class="w-full border rounded p-2"></textarea>
+                            </div>
+                            <div>
+                                <label class="input-label !text-gray-600">Sales Person</label>
+                                <select id="filterSalesPerson" class="w-full border rounded p-2">
+                                    <option value="">-- All Agents --</option>
+                                    </select>
+                            </div>
+                        </div>
+
+                        <div class="p-4 border-t bg-gray-50 grid grid-cols-2 gap-3">
+                            <button onclick="clearFilters()" class="py-2.5 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300 transition uppercase tracking-tighter text-[11px]">Clear</button>
+                            <button onclick="applyAdvancedFilter()" class="py-2.5 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 transition shadow-md uppercase tracking-tighter text-[11px]">Search</button>
+                        </div>
+                    </div>                          
+                </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-[11px] text-left border-collapse min-w-[1200px]">
                             <thead class="bg-[#2D1B1B] text-[#C08497] uppercase text-[10px]">
@@ -295,7 +361,7 @@
                         <button onclick="prevPage()" id="prevBtn" class="bg-gray-200 px-4 py-2 rounded text-xs font-bold hover:bg-gray-300 disabled:opacity-50">Previous</button>
                         <span id="pageInfo" class="text-xs font-bold text-gray-500">Page 1</span>
                         <button onclick="nextPage()" id="nextBtn" class="bg-gray-200 px-4 py-2 rounded text-xs font-bold hover:bg-gray-300 disabled:opacity-50">Next</button>
-                    </div> 
+                    </div>                        
                 </div>
             </div>
         </div>
@@ -1062,7 +1128,64 @@ function selectCurrentLine(textarea) {
 
     // එම පේළිය පමණක් Highlight කිරීම
     textarea.setSelectionRange(start, end);
-}  
+} 
+
+function toggleFilterSidebar() {
+        const sidebar = document.getElementById('filterSidebar');
+        sidebar.classList.toggle('open');
+        
+        // Sales person dropdown එක filter sidebar එකටත් fill කිරීම
+        const sideSelect = document.getElementById('filterSalesPerson');
+        if (sideSelect.options.length <= 1) {
+            settingsData.salesPersons.forEach(s => {
+                let opt = document.createElement('option');
+                opt.value = s.short;
+                opt.text = s.name;
+                sideSelect.add(opt);
+            });
+        }
+    }
+
+    function clearFilters() {
+        document.getElementById('filterDate').value = '';
+        document.getElementById('filterCustName').value = '';
+        document.getElementById('filterMobile').value = '';
+        document.getElementById('filterAddress').value = '';
+        document.getElementById('filterSalesPerson').value = '';
+    }
+
+    async function applyAdvancedFilter() {
+        const date = document.getElementById('filterDate').value;
+        const name = document.getElementById('filterCustName').value.toLowerCase();
+        const mobile = document.getElementById('filterMobile').value;
+        const address = document.getElementById('filterAddress').value.toLowerCase();
+        const sales = document.getElementById('filterSalesPerson').value;
+
+        // දැනට පවතින Table එකේ rows filter කිරීම (Client-side filtering)
+        let rows = document.getElementById("allOrdersTableBody").getElementsByTagName("tr");
+        
+        for (let row of rows) {
+            if (row.cells.length < 5) continue;
+            
+            let rowDate = row.cells[1].innerText;
+            let rowName = row.cells[4].innerText.toLowerCase();
+            let rowAddress = row.cells[5].innerText.toLowerCase();
+            let rowMobile = row.cells[7].innerText;
+            let rowSales = row.cells[11].innerText;
+
+            let matches = 
+                (!date || rowDate.includes(date)) &&
+                (!name || rowName.includes(name)) &&
+                (!mobile || rowMobile.includes(mobile)) &&
+                (!address || rowAddress.includes(address)) &&
+                (!sales || rowSales === sales);
+
+            row.style.display = matches ? "" : "none";
+        }
+        
+        // Filter කළ පසු sidebar එක වසා දමන්න
+        // toggleFilterSidebar(); 
+    }    
 </script>
 </body>
 </html>
