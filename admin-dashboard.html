@@ -245,13 +245,8 @@
                 </div>
             </div>
 
-            <!-- ALL ORDERS VIEW (database එකෙන් load වෙන) -->
-                              
-            <div id="allOrdersView" class="hidden p-4 lg:p-6 space-y-4">                             
-                <div class="bg-white rounded-xl shadow-sm border border-pink-100 overflow-hidden">
-                    <div class="header-bg p-4 flex justify-between items-center">
-                        <h4 class="text-white text-xs font-bold uppercase tracking-widest">📜 All Orders — Database</h4>
-                        <div class="flex items-center gap-2">
+            <!-- ALL ORDERS VIEW (database එකෙන් load වෙන) -->                 
+            
                             <!-- Export Dropdown -->
                             <div class="relative inline-block text-left" id="exportDropdownContainer">
                                 <button onclick="toggleExportMenu()" class="bg-gray-100 text-gray-800 text-[10px] px-4 py-1.5 rounded font-bold uppercase flex items-center gap-1 hover:bg-white transition">
@@ -996,47 +991,6 @@
         document.getElementById('orderTableBody').innerHTML = '<tr><td colspan="11" class="p-10 text-center text-gray-300 italic">No orders added to preview.</td></tr>';
         updateOrderStats();
     }
-
-    function searchOrders() {
-    let input = document.getElementById("orderSearchInput").value.toLowerCase();
-    let rows = document.getElementById("allOrdersTableBody").getElementsByTagName("tr");
-    for (let row of rows) {
-        let name = row.cells[4]?.innerText.toLowerCase() || "";
-        let phone = row.cells[7]?.innerText.toLowerCase() || "";
-        row.style.display = (name.includes(input) || phone.includes(input)) ? "" : "none";
-    }
-}
-
-    document.addEventListener('DOMContentLoaded', function() {
-    flatpickr("#dateFilter", {
-        mode: "range",
-        dateFormat: "Y-m-d",
-        onClose: function(selectedDates, dateStr, instance) {
-            if (selectedDates.length === 2) {
-                const startDate = selectedDates[0].toISOString().split('T')[0];
-                const endDate = selectedDates[1].toISOString().split('T')[0];
-                filterOrdersByDate(startDate, endDate);
-            }
-        }
-    });
-});
-
-async function filterOrdersByDate(start, end) {
-    const tbody = document.getElementById('allOrdersTableBody');
-    tbody.innerHTML = '<tr><td colspan="13" class="p-10 text-center animate-pulse">⏳ Filtering Orders...</td></tr>';
-
-    try {
-        // Backend එකට startDate සහ endDate එක query params ලෙස යැවීම
-        const response = await fetch(`/get-all-orders?page=1&start=${start}&end=${end}`);
-        const data = await response.json();
-        
-        // table එක refresh කිරීමට දැනට ඇති refreshAllOrders වල logic එකම භාවිතා කරන්න
-        renderOrdersToTable(data.orders); 
-    } catch (e) {
-        console.error("Filter error", e);
-    }
-}
-
 
     // Export Dropdown එක පෙන්වීමට සහ සැඟවීමට
 function toggleExportMenu() {
