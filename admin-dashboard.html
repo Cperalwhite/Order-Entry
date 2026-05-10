@@ -248,33 +248,29 @@
             <!-- ALL ORDERS VIEW (database එකෙන් load වෙන) -->
                               
             <div id="allOrdersView" class="hidden p-4 lg:p-6 space-y-4">
-                
-                <div class="bg-white rounded-xl shadow-sm border border-pink-100 overflow-hidden">
-                    <div class="header-bg p-4 flex justify-between items-center">
-                        <h4 class="text-white text-xs font-bold uppercase tracking-widest">📜 All Orders — Database</h4>
-                        <div class="flex items-center gap-2">
-                            <!-- Export Dropdown -->
-                            <div class="relative inline-block text-left" id="exportDropdownContainer">
-                                <button onclick="toggleExportMenu()" class="bg-gray-100 text-gray-800 text-[10px] px-4 py-1.5 rounded font-bold uppercase flex items-center gap-1 hover:bg-white transition">
-                                    📥 Export <span class="text-[8px]">▼</span>
-                                </button>
-                                <div id="exportMenu" class="hidden absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg py-1 z-[60] border border-gray-200">
-                                    <a href="#" onclick="exportData('xlsx')" class="block px-4 py-2 text-[11px] text-gray-700 hover:bg-pink-50 font-bold">Excel (.xlsx)</a>
-                                    <a href="#" onclick="exportData('csv')" class="block px-4 py-2 text-[11px] text-gray-700 hover:bg-pink-50 font-bold">CSV (.csv)</a>
-                                    <a href="#" onclick="exportData('pdf')" class="block px-4 py-2 text-[11px] text-gray-700 hover:bg-pink-50 font-bold">PDF (.pdf)</a>
-                                </div>
-                            </div>
-        
-                            <!-- පවතින Refresh Button එක -->
-                            <button onclick="refreshAllOrders()" class="bg-pink-500 text-white text-[10px] px-4 py-1.5 rounded font-bold uppercase transition hover:bg-pink-400">
-                                🔄 Refresh
-                            </button>
-                            <button onclick="toggleFilterSidebar()" class="bg-red-500 text-white p-2 rounded shadow hover:bg-red-600 transition flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 8.293A1 1 0 013 7.586V4z" />
-                                </svg>
-                            </button>                            
+                            
+                <div class="flex justify-end items-center gap-2 mb-2">
+                     <div class="relative inline-block text-left" id="exportDropdownContainer">
+                        <button onclick="toggleExportMenu()" class="bg-gray-100 text-gray-800 text-[10px] px-4 py-1.5 rounded font-bold uppercase flex items-center gap-1 hover:bg-white transition">
+                            📥 Export <span class="text-[8px]">▼</span>
+                        </button>
+                        <div id="exportMenu" class="hidden absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg py-1 z-[60] border border-gray-200">
+                            <a href="#" onclick="exportData('xlsx')" class="block px-4 py-2 text-[11px] text-gray-700 hover:bg-pink-50 font-bold">Excel (.xlsx)</a>
+                            <a href="#" onclick="exportData('csv')" class="block px-4 py-2 text-[11px] text-gray-700 hover:bg-pink-50 font-bold">CSV (.csv)</a>
+                            <a href="#" onclick="exportData('pdf')" class="block px-4 py-2 text-[11px] text-gray-700 hover:bg-pink-50 font-bold">PDF (.pdf)</a>
+                        </div>
                     </div>
+        
+                            
+                    <button onclick="refreshAllOrders()" class="bg-pink-500 text-white text-[10px] px-4 py-1.5 rounded font-bold uppercase transition hover:bg-pink-400">
+                        🔄 Refresh
+                    </button>
+                    <button onclick="toggleFilterSidebar()" class="bg-red-500 text-white p-2 rounded shadow hover:bg-red-600 transition flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 8.293A1 1 0 013 7.586V4z" />
+                        </svg>
+                    </button>                            
+                </div>
 
                     <div id="filterSidebar" class="fixed top-0 right-0 h-full w-[320px] bg-white shadow-2xl border-l flex flex-col">
                         <div class="p-4 border-b flex justify-between items-center bg-gray-50">
