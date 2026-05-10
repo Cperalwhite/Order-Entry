@@ -259,9 +259,7 @@
                             <a href="#" onclick="exportData('csv')" class="block px-4 py-2 text-[11px] text-gray-700 hover:bg-pink-50 font-bold">CSV (.csv)</a>
                             <a href="#" onclick="exportData('pdf')" class="block px-4 py-2 text-[11px] text-gray-700 hover:bg-pink-50 font-bold">PDF (.pdf)</a>
                         </div>
-                    </div>
-        
-                            
+                    </div>       
                     <button onclick="refreshAllOrders()" class="bg-pink-500 text-white text-[10px] px-4 py-1.5 rounded font-bold uppercase transition hover:bg-pink-400">
                         🔄 Refresh
                     </button>
@@ -280,6 +278,10 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-sm border border-pink-100 overflow-hidden">
+                            <div id="filterSidebar" class="fixed top-0 right-0 h-full w-[320px] bg-white shadow-2xl border-l flex flex-col z-[70]">
                         </div>
 
                         <div class="p-5 flex-1 overflow-y-auto space-y-4 text-xs">
