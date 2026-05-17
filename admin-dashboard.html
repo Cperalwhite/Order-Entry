@@ -904,8 +904,8 @@
         order_date: document.getElementById('orderDate').value,
         waybill_no: document.getElementById('waybillNo').value,
         order_no: document.getElementById('orderId').value || '', 
-        name: name,
-        address: document.getElementById('outAddress').value,
+        name: capitalizeEachWord(name),
+        address: capitalizeEachWord(document.getElementById('outAddress').value,
         items: shortDescription, 
         phone: cleanedPhone1,
         phone2: cleanedPhone2 || '',
@@ -955,6 +955,10 @@
     const discount = parseFloat(document.getElementById('discountRate').value) || 0;
     const finalTotal = subtotal > 0 ? (subtotal + deliveryCharge - discount) : 0;
 
+    const capitalizedName = capitalizeEachWord(name);
+    const capitalizedAddress = capitalizeEachWord(document.getElementById('outAddress').value);
+    const capitalizedCity = capitalizeEachWord(document.getElementById('outCity').value);
+        
     const row = tbody.insertRow();
     row.className = "hover:bg-pink-50/30 border-b border-gray-100";
     row.innerHTML = `
