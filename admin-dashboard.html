@@ -439,6 +439,13 @@
         el.classList.add('active');
     }
 
+    function capitalizeEachWord(str) {
+        if (!str) return "";
+        return str.toLowerCase().split(' ').map(word => {
+            return word.charAt(0).toUpperCase() + word.slice(1);
+        }).join(' ');
+    }
+
     // =============================================
     // VIEW SWITCHING — ප්‍රධාන 3 functions
     // =============================================
@@ -905,7 +912,7 @@
         waybill_no: document.getElementById('waybillNo').value,
         order_no: document.getElementById('orderId').value || '', 
         name: capitalizeEachWord(name),
-        address: capitalizeEachWord(document.getElementById('outAddress').value,
+        address: capitalizeEachWord(document.getElementById('outAddress').value),
         items: shortDescription, 
         phone: cleanedPhone1,
         phone2: cleanedPhone2 || '',
