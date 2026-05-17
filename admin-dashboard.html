@@ -114,7 +114,7 @@
                 <section>
                     <span class="input-label">📋 DETAILS</span>
                     <div class="grid grid-cols-2 gap-3">
-                        <select id="salesPerson" class="w-full border rounded p-2 text-xs font-semibold">
+                        <select id="salesPerson" onchange="updateSalesPersonDashboard()" class="w-full border rounded p-2 text-xs font-semibold">
                             <option value="">-- Select --</option>
                         </select>
                         <input type="date" id="orderDate" value="2026-05-01" class="w-full border rounded p-2 text-xs">
@@ -662,7 +662,6 @@
         }
 
         document.getElementById('finalPriceDisplay').innerText = final.toFixed(2);
-        document.getElementById('orderCount').innerText = cart.length > 0 ? 1 : 0;
         document.getElementById('sideOrderBadge').innerText = cart.length > 0 ? 1 : 0;
     }
 
@@ -928,6 +927,14 @@
         if (res.ok) {
             addOrderToTable(shortDescription); 
             alert("Order Saved Successfully ✅");
+
+            const countDisplay = document.getElementById('orderCount');
+            if (countDisplay) {
+                let currentCount = parseInt(countDisplay.getAttribute('data-current-count') || '0', 10);
+                let newCount = currentCount + 1;
+                countDisplay.innerText = newCount;
+                countDisplay.setAttribute('data-current-count', newCount.toString());
+            }
         } else {
             alert("Database Save Failed ❌");
         }
@@ -965,6 +972,43 @@
     `;
     updateOrderStats();
     clearForm();
+}
+
+    async function updateSalesPersonDashboard() {
+    const salesSelect = document.getElementById('salesPerson');
+    const selectedName = salesSelect.value;
+    
+    const nameDisplay = document.getElementById('salespersonName');
+    const countDisplay = document.getElementById('salespersonCount');
+
+    if (!selectedName) {
+        nameDisplay.innerText = "--";
+        countDisplay.innerText = "(Orders: 0)";
+        countDisplay.setAttribute('data-current-count', '0'); // Count එක 0 කරයි
+        return;
+    }
+
+    const person = settingsData.salesPersons.find(s => s.name === selectedName);
+    const agentShort = person ? person.short : selectedName;
+
+    nameDisplay.innerText = agentShort;
+    countDisplay.innerText = "(⌛ Checking...)";
+
+    try {
+        let url = `/get-all-orders?page=1&sales=${encodeURIComponent(agentShort)}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        const totalOrders = data.totalOrders || (data.orders ? data.orders.length : 0);
+        
+        // අගය Screen එකේ පෙන්වීම සහ මතක තබා ගැනීම
+        countDisplay.innerText = `(Orders: ${totalOrders})`;
+        countDisplay.setAttribute('data-current-count', totalOrders.toString());
+    } catch (e) {
+        console.error("Error fetching count:", e);
+        countDisplay.innerText = "(Orders: 0)";
+        countDisplay.setAttribute('data-current-count', '0');
+    }
 }
 
     function updateOrderStats() {
