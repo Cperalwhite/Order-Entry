@@ -1,18 +1,14 @@
 export async function onRequestPost(context) {
   const { request, env } = context;
-
   try {
     const { rawText, systemPrompt } = await request.json();
-
     if (!rawText) {
       return Response.json({ error: 'rawText is required' }, { status: 400 });
     }
-
     const apiKey = env.GROQ_API_KEY;
     if (!apiKey) {
       return Response.json({ error: 'GROQ_API_KEY not configured' }, { status: 500 });
     }
-
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -20,6 +16,8 @@ export async function onRequestPost(context) {
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
+        // llama-3.1-8b-instant was deprecated by Groq (2026-06-17).
+        // openai/gpt-oss-20b is the recommended replacement.
         model: 'openai/gpt-oss-20b',
         max_tokens: 1500,
         temperature: 0,
@@ -29,19 +27,14 @@ export async function onRequestPost(context) {
         ]
       })
     });
-
     const data = await res.json();
-
     if (!res.ok) {
       return Response.json({ error: data.error?.message || 'Groq API error' }, { status: res.status });
     }
-
     const rawJson = (data.choices?.[0]?.message?.content || '')
       .replace(/```json|```/g, '')
       .trim();
-
     const parsed = JSON.parse(rawJson);
-
     // Normalize
     const result = {
       name:     parsed.name     || '',
@@ -54,9 +47,7 @@ export async function onRequestPost(context) {
       delivery: parseFloat(parsed.delivery) || 0,
       rmk:      parsed.rmk      || ''
     };
-
     return Response.json(result);
-
   } catch (err) {
     return Response.json({ error: err.message }, { status: 500 });
   }
