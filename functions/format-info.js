@@ -1,15 +1,12 @@
 export async function onRequestPost(context) {
     const { request, env } = context;
-
     const corsHeaders = {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type",
     };
-
     try {
         const { rawText } = await request.json();
-
         const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -17,7 +14,9 @@ export async function onRequestPost(context) {
                 'Authorization': `Bearer ${env.GROQ_API_KEY}` 
             },
             body: JSON.stringify({
-                model: "llama-3.3-70b-versatile",
+                // llama-3.3-70b-versatile was deprecated & shut down by Groq (2026-08-16).
+                // openai/gpt-oss-120b is Groq's recommended replacement for it.
+                model: "openai/gpt-oss-120b",
                 messages: [
                     {
                         role: "system",
@@ -28,13 +27,11 @@ export async function onRequestPost(context) {
                 response_format: { type: "json_object" }
             })
         });
-
         const data = await response.json();
         
         return new Response(JSON.stringify(data), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
-
     } catch (error) {
         return new Response(JSON.stringify({ error: error.message }), { 
             status: 500,
@@ -42,7 +39,6 @@ export async function onRequestPost(context) {
         });
     }
 }
-
 export async function onRequestOptions() {
     return new Response(null, {
         headers: {
