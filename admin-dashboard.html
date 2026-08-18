@@ -184,8 +184,8 @@
                         <p class="text-[10px] font-bold text-gray-400 uppercase leading-none">Sales Person</p>
                         <h3 class="text-lg font-black text-gray-800 leading-none mt-1">
                             <span id="salespersonName">--</span>
-                            <span id="salespersonCount" class="text-[10px] font-bold text-gray-400 block" data-current-count="0">(Orders: 0)</span>
                         </h3>
+                        <span id="salespersonCount" class="text-[9px] font-bold text-gray-400 leading-none" data-current-count="0">(Orders: 0)</span>
                     </div> 
                 
                     <button onclick="clearTable()" class="bg-white p-3 rounded-xl shadow-sm border border-dashed border-gray-300 flex flex-col justify-center items-center h-14 transition hover:bg-gray-50 hover:border-red-300 group text-center">
@@ -991,9 +991,15 @@
     async function updateSalesPersonDashboard() {
     const salesSelect = document.getElementById('salesPerson');
     const selectedName = salesSelect.value;
-    
+
     const nameDisplay = document.getElementById('salespersonName');
     const countDisplay = document.getElementById('salespersonCount');
+
+    // Elements DOM එකේ නැත්නම් (id mismatch/missing) safely stop කරන්න
+    if (!nameDisplay || !countDisplay) {
+        console.warn("updateSalesPersonDashboard: 'salespersonName' or 'salespersonCount' element not found in DOM.");
+        return;
+    }
 
     if (!selectedName) {
         nameDisplay.innerText = "--";
@@ -1066,17 +1072,20 @@
 }
 
     document.addEventListener('DOMContentLoaded', function() {
-    flatpickr("#dateFilter", {
-        mode: "range",
-        dateFormat: "Y-m-d",
-        onClose: function(selectedDates, dateStr, instance) {
-            if (selectedDates.length === 2) {
-                const startDate = selectedDates[0].toISOString().split('T')[0];
-                const endDate = selectedDates[1].toISOString().split('T')[0];
-                filterOrdersByDate(startDate, endDate);
+    const dateFilterEl = document.getElementById("dateFilter");
+    if (dateFilterEl) {
+        flatpickr("#dateFilter", {
+            mode: "range",
+            dateFormat: "Y-m-d",
+            onClose: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length === 2) {
+                    const startDate = selectedDates[0].toISOString().split('T')[0];
+                    const endDate = selectedDates[1].toISOString().split('T')[0];
+                    filterOrdersByDate(startDate, endDate);
+                }
             }
-        }
-    });
+        });
+    }
 });
 
 async function filterOrdersByDate(start, end) {
