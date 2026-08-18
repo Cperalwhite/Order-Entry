@@ -182,7 +182,10 @@
 
                     <div class="bg-white p-3 rounded-xl shadow-sm border border-pink-100 flex flex-col justify-center items-center h-14 transition hover:shadow-md">
                         <p class="text-[10px] font-bold text-gray-400 uppercase leading-none">Sales Person</p>
-                             <h3 id="salesperson" class="text-lg font-black text-gray-800 leading-none mt-1">0</h3> 
+                        <h3 class="text-lg font-black text-gray-800 leading-none mt-1">
+                            <span id="salespersonName">--</span>
+                            <span id="salespersonCount" class="text-[10px] font-bold text-gray-400 block" data-current-count="0">(Orders: 0)</span>
+                        </h3>
                     </div> 
                 
                     <button onclick="clearTable()" class="bg-white p-3 rounded-xl shadow-sm border border-dashed border-gray-300 flex flex-col justify-center items-center h-14 transition hover:bg-gray-50 hover:border-red-300 group text-center">
