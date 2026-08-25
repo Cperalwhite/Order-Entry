@@ -3875,6 +3875,13 @@
         countDisplay.innerText = "(Orders: 0)";
         countDisplay.setAttribute('data-current-count', '0');
     }
+
+        // Shafra select කළහොත් Delivery charge එක auto 0.00 කරයි
+        const delOptionEl = document.getElementById('delOption');
+        if (delOptionEl && selectedName.trim().toLowerCase() === 'shafra') {
+            delOptionEl.value = 'no';
+            handleDelOption();
+        }
 }
 
     function updateOrderStats() {
